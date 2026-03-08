@@ -1,0 +1,517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B7D12D5B-76F4-30B8-8284-EF97D526ED11}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>SigmaEncryptor</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\dev\repos\C++\Sigma encyptor 4.0\build\bin\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SigmaEncryptor.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SigmaEncryptor</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\dev\repos\C++\Sigma encyptor 4.0\build\bin\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SigmaEncryptor.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SigmaEncryptor</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\dev\repos\C++\Sigma encyptor 4.0\build\bin\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">SigmaEncryptor.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">SigmaEncryptor</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\dev\repos\C++\Sigma encyptor 4.0\build\bin\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">SigmaEncryptor.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">SigmaEncryptor</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message>Копирование glfw3.dll	Копирование libcrypto-3-x64.dll	Копирование libssl-3-x64.dll</Message>
+      <Command>setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/glfw3.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/Debug"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/libcrypto-3-x64.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/Debug"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/libssl-3-x64.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/Debug"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>C:/dev/repos/C++/Sigma encyptor 4.0/build/lib/Debug/SigmaEncryptor.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/Debug/SigmaEncryptor.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message>Копирование glfw3.dll	Копирование libcrypto-3-x64.dll	Копирование libssl-3-x64.dll</Message>
+      <Command>setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/glfw3.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/Release"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/libcrypto-3-x64.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/Release"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/libssl-3-x64.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/Release"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>C:/dev/repos/C++/Sigma encyptor 4.0/build/lib/Release/SigmaEncryptor.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/Release/SigmaEncryptor.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message>Копирование glfw3.dll	Копирование libcrypto-3-x64.dll	Копирование libssl-3-x64.dll</Message>
+      <Command>setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/glfw3.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/MinSizeRel"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/libcrypto-3-x64.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/MinSizeRel"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/libssl-3-x64.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/MinSizeRel"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>C:/dev/repos/C++/Sigma encyptor 4.0/build/lib/MinSizeRel/SigmaEncryptor.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/MinSizeRel/SigmaEncryptor.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\dev\repos\C++\Sigma encyptor 4.0\src;C:\Users\HeimDall\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message>Копирование glfw3.dll	Копирование libcrypto-3-x64.dll	Копирование libssl-3-x64.dll</Message>
+      <Command>setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/glfw3.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/RelWithDebInfo"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/libcrypto-3-x64.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/RelWithDebInfo"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe -E copy_if_different C:/Users/HeimDall/vcpkg/installed/x64-windows/bin/libssl-3-x64.dll "C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/RelWithDebInfo"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>C:/dev/repos/C++/Sigma encyptor 4.0/build/lib/RelWithDebInfo/SigmaEncryptor.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>C:/dev/repos/C++/Sigma encyptor 4.0/build/bin/RelWithDebInfo/SigmaEncryptor.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\dev\repos\C++\Sigma encyptor 4.0\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/dev/repos/C++/Sigma encyptor 4.0/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe "-SC:/dev/repos/C++/Sigma encyptor 4.0" "-BC:/dev/repos/C++/Sigma encyptor 4.0/build" --check-stamp-file "C:/dev/repos/C++/Sigma encyptor 4.0/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeCXXInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeCommonLanguageInclude.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeGenericSystem.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeInitializeConfigs.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeLanguageInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeRCInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeSystemSpecificInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeSystemSpecificInitialize.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindOpenGL.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindPackageHandleStandardArgs.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindPackageMessage.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Linker\MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Linker\MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Linker\Windows-MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-Initialize.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\WindowsPaths.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeCXXCompiler.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeRCCompiler.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/dev/repos/C++/Sigma encyptor 4.0/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe "-SC:/dev/repos/C++/Sigma encyptor 4.0" "-BC:/dev/repos/C++/Sigma encyptor 4.0/build" --check-stamp-file "C:/dev/repos/C++/Sigma encyptor 4.0/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeCXXInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeCommonLanguageInclude.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeGenericSystem.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeInitializeConfigs.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeLanguageInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeRCInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeSystemSpecificInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeSystemSpecificInitialize.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindOpenGL.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindPackageHandleStandardArgs.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindPackageMessage.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Linker\MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Linker\MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Linker\Windows-MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-Initialize.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\WindowsPaths.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeCXXCompiler.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeRCCompiler.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/dev/repos/C++/Sigma encyptor 4.0/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe "-SC:/dev/repos/C++/Sigma encyptor 4.0" "-BC:/dev/repos/C++/Sigma encyptor 4.0/build" --check-stamp-file "C:/dev/repos/C++/Sigma encyptor 4.0/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeCXXInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeCommonLanguageInclude.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeGenericSystem.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeInitializeConfigs.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeLanguageInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeRCInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeSystemSpecificInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeSystemSpecificInitialize.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindOpenGL.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindPackageHandleStandardArgs.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindPackageMessage.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Linker\MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Linker\MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Linker\Windows-MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-Initialize.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\WindowsPaths.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeCXXCompiler.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeRCCompiler.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/dev/repos/C++/Sigma encyptor 4.0/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe "-SC:/dev/repos/C++/Sigma encyptor 4.0" "-BC:/dev/repos/C++/Sigma encyptor 4.0/build" --check-stamp-file "C:/dev/repos/C++/Sigma encyptor 4.0/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeCXXInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeCommonLanguageInclude.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeGenericSystem.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeInitializeConfigs.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeLanguageInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeRCInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeSystemSpecificInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\CMakeSystemSpecificInitialize.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Compiler\MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindOpenGL.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindPackageHandleStandardArgs.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\FindPackageMessage.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Linker\MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Linker\MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Linker\Windows-MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-Initialize.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-MSVC-CXX.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows-MSVC.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\Windows.cmake;C:\dev\prog\libs\cmake\share\cmake-4.3\Modules\Platform\WindowsPaths.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeCXXCompiler.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeRCCompiler.cmake;C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\4.3.0-rc2\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\dev\repos\C++\Sigma encyptor 4.0\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\main.cpp" />
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\application.cpp" />
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\gui\renderer.cpp" />
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\gui\ui.cpp" />
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\gui\theme.cpp" />
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\gui\file_dialog.cpp" />
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\crypto\encryptor.cpp" />
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\crypto\aes.cpp" />
+    <ClCompile Include="C:\dev\repos\C++\Sigma encyptor 4.0\src\crypto\chacha20.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\dev\repos\C++\Sigma encyptor 4.0\build\ZERO_CHECK.vcxproj">
+      <Project>{628D2A94-D331-35DA-8947-B81A7C207200}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
