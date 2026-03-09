@@ -1,0 +1,9 @@
+C:\dev\repos\C++\Sigma encyptor 4.0\src\main.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\main.obj
+C:\dev\repos\C++\Sigma encyptor 4.0\src\application.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\application.obj
+C:\dev\repos\C++\Sigma encyptor 4.0\src\gui\renderer.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\renderer.obj
+C:\dev\repos\C++\Sigma encyptor 4.0\src\gui\ui.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\ui.obj
+C:\dev\repos\C++\Sigma encyptor 4.0\src\gui\theme.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\theme.obj
+C:\dev\repos\C++\Sigma encyptor 4.0\src\gui\file_dialog.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\file_dialog.obj
+C:\dev\repos\C++\Sigma encyptor 4.0\src\crypto\encryptor.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\encryptor.obj
+C:\dev\repos\C++\Sigma encyptor 4.0\src\crypto\aes.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\aes.obj
+C:\dev\repos\C++\Sigma encyptor 4.0\src\crypto\chacha20.cpp;C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\chacha20.obj

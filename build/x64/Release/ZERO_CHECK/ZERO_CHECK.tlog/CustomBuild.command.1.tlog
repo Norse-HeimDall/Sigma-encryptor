@@ -1,0 +1,10 @@
+^C:\DEV\REPOS\C++\SIGMA ENCYPTOR 4.0\BUILD\CMAKEFILES\9427293AB053731A37F882CFB856B6BB\GENERATE.STAMP.RULE
+setlocal
+C:\dev\prog\libs\cmake\bin\cmake.exe "-SC:/dev/repos/C++/Sigma encyptor 4.0" "-BC:/dev/repos/C++/Sigma encyptor 4.0/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/dev/repos/C++/Sigma encyptor 4.0/build/SigmaEncryptor.slnx"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

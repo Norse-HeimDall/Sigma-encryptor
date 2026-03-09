@@ -1,0 +1,30 @@
+# CMake generation dependency list for this directory.
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/CMakeCXXInformation.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/CMakeCommonLanguageInclude.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/CMakeGenericSystem.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/CMakeInitializeConfigs.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/CMakeLanguageInformation.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/CMakeRCInformation.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/CMakeSystemSpecificInformation.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/CMakeSystemSpecificInitialize.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Compiler/MSVC-CXX.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Compiler/MSVC.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/FindOpenGL.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/FindPackageHandleStandardArgs.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/FindPackageMessage.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Internal/CMakeCXXLinkerInformation.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Internal/CMakeCommonLinkerInformation.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Linker/MSVC-CXX.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Linker/MSVC.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Platform/Linker/Windows-MSVC-CXX.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Platform/Linker/Windows-MSVC.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Platform/Windows-Initialize.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Platform/Windows-MSVC-CXX.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Platform/Windows-MSVC.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Platform/Windows.cmake
+C:/dev/prog/libs/cmake/share/cmake-4.3/Modules/Platform/WindowsPaths.cmake
+C:/dev/repos/C++/Sigma encyptor 4.0/CMakeLists.txt
+C:/dev/repos/C++/Sigma encyptor 4.0/build/CMakeFiles/4.3.0-rc2/CMakeCXXCompiler.cmake
+C:/dev/repos/C++/Sigma encyptor 4.0/build/CMakeFiles/4.3.0-rc2/CMakeRCCompiler.cmake
+C:/dev/repos/C++/Sigma encyptor 4.0/build/CMakeFiles/4.3.0-rc2/CMakeSystem.cmake
