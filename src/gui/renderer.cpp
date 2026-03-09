@@ -95,21 +95,21 @@ bool Renderer::initialize(GLFWwindow* window)
         0x0400, 0x04FF, // Cyrillic
         0x0500, 0x052F, // Cyrillic Supplement
         0x2DE0, 0x2DFF, // Cyrillic Extended-A
-        0xA640, 0xA69F, // Cyrillic Extended-B
+        0xA640, 0x69F, // Cyrillic Extended-B
         0,
     };
     
-    // Пробуем загрузить системный шрифт с поддержкой кириллицы (Windows)
-    // Используем Segoe UI для качественного отображения
+    ImFont* font = nullptr;
+    
+#ifdef _WIN32
+    // Windows: ищем системные шрифты
     const char* fontPaths[] = {
-        "C:/Windows/Fonts/segoeuib.ttf",   // Segoe UI Bold - качественный
+        "C:/Windows/Fonts/segoeuib.ttf",   // Segoe UI Bold
         "C:/Windows/Fonts/seguisb.ttf",    // Segoe UI Semibold
         "C:/Windows/Fonts/segoeui.ttf",    // Segoe UI
         "C:/Windows/Fonts/arial.ttf",      // Arial
     };
     
-    ImFont* font = nullptr;
-    // Увеличиваем размер шрифта до 20.0f для красоты
     for (const char* fontPath : fontPaths)
     {
         font = io.Fonts->AddFontFromFileTTF(fontPath, 20.0f, nullptr, cyrillic_ranges);
@@ -119,6 +119,31 @@ bool Renderer::initialize(GLFWwindow* window)
             break;
         }
     }
+    
+#elif defined(__linux__)
+    // Linux: ищем системные шрифты
+    const char* fontPaths[] = {
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans.ttf",
+        "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf",
+        "/usr/share/fonts/truetype/ubuntu/Ubuntu.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+        "/usr/share/fonts/truetype/arphic/uming.ttc",  // AR PL UMing CN
+    };
+    
+    for (const char* fontPath : fontPaths)
+    {
+        font = io.Fonts->AddFontFromFileTTF(fontPath, 20.0f, nullptr, cyrillic_ranges);
+        if (font)
+        {
+            std::cout << "[INFO] Loaded font: " << fontPath << " at 20px" << std::endl;
+            break;
+        }
+    }
+#endif
     
     // Если системные шрифты не загрузились, используем встроенный по умолчанию
     if (!font)
@@ -141,11 +166,20 @@ bool Renderer::initialize(GLFWwindow* window)
     fonts->Build();
     
     // Добавляем второй шрифт меньшего размера для логов
+#ifdef _WIN32
     const char* smallFontPaths[] = {
         "C:/Windows/Fonts/seguisb.ttf",    // Segoe UI Semibold
         "C:/Windows/Fonts/segoeui.ttf",    // Segoe UI
         "C:/Windows/Fonts/arial.ttf",      // Arial
     };
+#elif defined(__linux__)
+    const char* smallFontPaths[] = {
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans.ttf",
+        "/usr/share/fonts/truetype/ubuntu/Ubuntu.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+    };
+#endif
     
     for (const char* fontPath : smallFontPaths)
     {

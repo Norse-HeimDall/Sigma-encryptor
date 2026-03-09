@@ -1,6 +1,6 @@
 /**
  * @file file_dialog.hpp
- * @brief Нативный диалог выбора файла для Windows
+ * @brief Нативный диалог выбора файла
  */
 
 #ifndef SIGMA_FILE_DIALOG_HPP
@@ -14,7 +14,7 @@ namespace sigma
 
 /**
  * @class FileDialog
- * @brief Класс для работы с нативными файловыми диалогами Windows
+ * @brief Кла нативными файсс для работы словыми диалогами
  */
 class FileDialog
 {
@@ -43,7 +43,7 @@ public:
 
 private:
     /**
-     * @brief Создаёт строку фильтра для Windows диалога
+     * @brief Создаёт строку фильтра для диалога
      */
     static std::string buildFilterString(const std::vector<std::pair<std::string, std::string>>& filters);
 };

@@ -19,27 +19,27 @@
 #include <memory>       // Умные указатели
 #include <stdexcept>    // Исключения стандартной библиотеки
 #include <clocale>      // Для setlocale
-#include <windows.h>    // Для SetConsoleCP
 
 // Заголовочные файлы проекта
 #include "application.hpp"  // Главный класс приложения
 
 /**
- * @brief Настраивает UTF-8 кодировку для консоли Windows
+ * @brief Настраивает UTF-8 кодировку для консоли
  */
 void setupConsoleEncoding()
 {
     // Устанавливаем локаль для поддержки UTF-8
-    std::setlocale(LC_ALL, ".UTF8");
+    std::setlocale(LC_ALL, "en_US.UTF-8");
     
-    // Настраиваем кодовую страницу консоли на UTF-8 (65001)
-    SetConsoleCP(65001);
-    SetConsoleOutputCP(65001);
-    
+#if defined(__linux__)
+    // На Linux.UTF-8 уже должна поддерживаться терминалом
+    // Можно также попробовать ru_RU.UTF-8 для русского
+    std::setlocale(LC_ALL, "ru_RU.UTF-8");
+#endif
+
     // Устанавливаем режим вывода UTF-8 для std::cout
     std::cout.sync_with_stdio(false);
     
-    // Также выводим тест русских символов
     std::cout << "Console encoding: UTF-8" << std::endl;
 }
 
