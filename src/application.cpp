@@ -11,24 +11,24 @@
  * - Обработка сворачивания: пропуск рендеринга при свернутом окне
  * - Отладка OpenGL: вывод ошибок в консоль
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 
-// Подключение заголовочного файла класса
+
 #include "application.hpp"
 
-// Подключение компонентов
+
 #include "gui/renderer.hpp"   // Рендерер
 #include "gui/ui.hpp"         // Пользовательский интерфейс
 
-// Стандартные библиотеки C++
+
 #include <iostream>   // Вывод в консоль
 #include <cstring>    // memset
 #include <thread>     // std::this_thread::sleep_for
 #include <chrono>     // std::chrono
 
-// Подключаем GLFW - библиотеку для создания окон и обработки ввода
+// GLFW - библиотеку для создания окон и обработки ввода
 #include <GLFW/glfw3.h>
 
 namespace sigma

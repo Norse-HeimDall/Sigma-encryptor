@@ -4,7 +4,7 @@
  * 
  * ChaCha20-Poly1305 - современный потоковый шифр с аутентификацией.
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 

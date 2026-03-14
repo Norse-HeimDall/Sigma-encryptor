@@ -11,7 +11,7 @@
  * - ImGui для создания пользовательского интерфейса в стиле Obsidian
  * - OpenSSL для криптографических операций
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 
@@ -21,7 +21,6 @@
 #include <clocale>      // Для setlocale
 #include <windows.h>    // Для SetConsoleCP
 
-// Заголовочные файлы проекта
 #include "application.hpp"  // Главный класс приложения
 
 /**

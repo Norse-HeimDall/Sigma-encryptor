@@ -1,6 +1,6 @@
 /**
  * @file theme.cpp
- * @brief Реализация темы Obsidian для ImGui
+ * @brief Реализация темы ImGui
  */
 
 #include "theme.hpp"
@@ -11,7 +11,7 @@ namespace sigma
 {
 
 // =============================================================================
-// ЦВЕТОВАЯ ПАЛИТРА OBSIDIAN
+// ЦВЕТОВАЯ ПАЛИТРА 
 // =============================================================================
 
 namespace Colors
@@ -85,7 +85,6 @@ void Theme::applyObsidianTheme()
     // ========================================
     
     // Цвета (Colors) - используем IM_COL32 для ARGB
-    // ImGui Colours: https://github.com/ocornut/imgui/blob/master/imgui.h
     
 // Фон и контейнеры
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.129f, 0.129f, 0.149f, 1.0f);       // #212125

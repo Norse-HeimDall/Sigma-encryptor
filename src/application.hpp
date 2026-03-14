@@ -11,7 +11,7 @@
  * - Контекст ImGui для рендеринга UI
  * - Логику пользовательского интерфейса
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 

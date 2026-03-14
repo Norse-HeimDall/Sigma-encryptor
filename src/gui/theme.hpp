@@ -1,12 +1,12 @@
 /**
  * @file theme.hpp
- * @brief Заголовочный файл темы Obsidian для ImGui
+ * @brief Заголовочный файл темы для ImGui
  * 
  * @details
  * Содержит настройки цветов и стилей для создания
- * минималистичного интерфейса в стиле Obsidian.
+ * интерфейса
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 
@@ -20,13 +20,13 @@ namespace sigma
 
 /**
  * @class Theme
- * @brief Управление темой оформления в стиле Obsidian
+ * @brief Управление темой оформления
  */
 class Theme
 {
 public:
     /**
-     * @brief Применяет тему Obsidian
+     * @brief Применяет тему 
      * 
      * Настраивает цвета ImGui:
      * - Тёмный фон

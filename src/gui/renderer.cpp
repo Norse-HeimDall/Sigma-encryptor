@@ -102,14 +102,14 @@ bool Renderer::initialize(GLFWwindow* window)
     // Пробуем загрузить системный шрифт с поддержкой кириллицы (Windows)
     // Используем Segoe UI для качественного отображения
     const char* fontPaths[] = {
-        "C:/Windows/Fonts/segoeuib.ttf",   // Segoe UI Bold - качественный
+        "C:/Windows/Fonts/segoeuib.ttf",   // Segoe UI Bold
         "C:/Windows/Fonts/seguisb.ttf",    // Segoe UI Semibold
         "C:/Windows/Fonts/segoeui.ttf",    // Segoe UI
         "C:/Windows/Fonts/arial.ttf",      // Arial
     };
     
     ImFont* font = nullptr;
-    // Увеличиваем размер шрифта до 20.0f для красоты
+    // Увеличиваем размер шрифта до 20.0f
     for (const char* fontPath : fontPaths)
     {
         font = io.Fonts->AddFontFromFileTTF(fontPath, 20.0f, nullptr, cyrillic_ranges);
@@ -131,7 +131,6 @@ bool Renderer::initialize(GLFWwindow* window)
     io.FontDefault = font;
     
     // Добавляем резервный шрифт для символов, которые могут отсутствовать
-    // Это обеспечит красивое отображение всех символов
     ImFontAtlas* fonts = io.Fonts;
     
     // Настраиваем параметры сглаживания - БОЛЬШЕ ЗНАЧЕНИЯ = ЧЁТЧЕ ШРИФТ
@@ -292,10 +291,6 @@ void Renderer::shutdown()
     // - Внутренние структуры данных ImGui
     // - Выделенную память для работы библиотеки
     // 
-    // Без этого вызова возможны:
-    // - Утечки памяти
-    // - Проблемы при повторном создании ImGui контекста
-    // - Неопределённое поведение при выходе из приложения
     // -------------------------------------------------------------------------
     ImGui::DestroyContext();
 

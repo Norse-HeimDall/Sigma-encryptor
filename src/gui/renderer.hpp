@@ -8,7 +8,7 @@
  * - Настройкой ImGui
  * - Рендерингом кадров
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 

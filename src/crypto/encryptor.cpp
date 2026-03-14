@@ -17,7 +17,7 @@
  * | Salt: 16 байт   | каждого файла)   |                       |
  * +------------------+------------------+------------------------+
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 
@@ -34,7 +34,9 @@
 #include <iostream>           // Для отладочного вывода
 #include <fstream>            // Работа с файлами
 #include <sstream>            // Строковые потоки
-#include <cstring>           // memcpy, memset
+#include <iomanip>            // std::setprecision
+#include <chrono>             // Для измерения времени
+#include <ctime>              // Для локального времени
 
 // Windows API для Unicode файлов
 #ifdef _WIN32
@@ -50,6 +52,111 @@
 
 namespace sigma
 {
+
+// =============================================================================
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ЛОГИРОВАНИЯ
+// =============================================================================
+
+/**
+ * @brief Получает текущее время в виде строки
+ */
+static std::string getCurrentTimeString()
+{
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        now.time_since_epoch()) % 1000;
+    
+    std::tm tm_buf;
+#ifdef _WIN32
+    localtime_s(&tm_buf, &time_t);
+#else
+    localtime_r(&time_t, &tm_buf);
+#endif
+    
+    std::ostringstream oss;
+    oss << std::put_time(&tm_buf, "%Y-%m-%d %H:%M:%S");
+    oss << '.' << std::setfill('0') << std::setw(3) << ms.count();
+    return oss.str();
+}
+
+/**
+ * @brief Конвертирует размер файла в читабельный вид
+ */
+static std::string formatFileSize(size_t bytes)
+{
+    const char* units[] = {"Б", "КБ", "МБ", "ГБ", "ТБ"};
+    int unitIndex = 0;
+    double size = static_cast<double>(bytes);
+    
+    while (size >= 1024.0 && unitIndex < 4)
+    {
+        size /= 1024.0;
+        unitIndex++;
+    }
+    
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2) << size << " " << units[unitIndex];
+    return oss.str();
+}
+
+/**
+ * @brief Выводит подробный заголовок лога операции
+ */
+static void logOperationHeader(const char* operation, const std::string& filePath, size_t fileSize)
+{
+    std::cout << std::endl;
+    std::cout << "═══════════════════════════════════════════════════════════════" << std::endl;
+    std::cout << "  [НАЧАЛО] " << operation << std::endl;
+    std::cout << "═══════════════════════════════════════════════════════════════" << std::endl;
+    std::cout << "  [ВРЕМЯ]      " << getCurrentTimeString() << std::endl;
+    std::cout << "  [ФАЙЛ]       " << filePath << std::endl;
+    std::cout << "  [РАЗМЕР]     " << formatFileSize(fileSize) << " (" << fileSize << " байт)" << std::endl;
+    std::cout << "───────────────────────────────────────────────────────────────" << std::endl;
+}
+
+/**
+ * @brief Выводит подробный лог завершения операции
+ */
+static void logOperationEnd(const char* operation, size_t originalSize, size_t resultSize, 
+                            double durationMs, bool success, const std::string& outputPath = "")
+{
+    // Вычисляем скорость в МБ/с
+    double speedMBps = 0.0;
+    if (durationMs > 0)
+    {
+        speedMBps = (originalSize / (1024.0 * 1024.0)) / (durationMs / 1000.0);
+    }
+    
+    std::cout << "───────────────────────────────────────────────────────────────" << std::endl;
+    std::cout << "  [ЗАВЕРШЕНО] " << operation << std::endl;
+    std::cout << "  [ВРЕМЯ]     " << getCurrentTimeString() << std::endl;
+    std::cout << "  [ДЛИТЕЛЬНОСТЬ] " << std::fixed << std::setprecision(2) << durationMs << " мс" << std::endl;
+    
+    if (speedMBps > 0)
+    {
+        std::cout << "  [СКОРОСТЬ]  " << std::setprecision(2) << speedMBps << " МБ/с" << std::endl;
+    }
+    
+    if (originalSize > 0)
+    {
+        std::cout << "  [РАЗМЕР]    " << formatFileSize(originalSize);
+        if (resultSize != originalSize)
+        {
+            std::cout << " -> " << formatFileSize(resultSize);
+        }
+        std::cout << std::endl;
+    }
+    
+    if (!outputPath.empty())
+    {
+        std::cout << "  [ВЫВОД]     " << outputPath << std::endl;
+    }
+    
+    std::cout << "  [СТАТУС]    " << (success ? "УСПЕХ ✓" : "ОШИБКА ✗") << std::endl;
+    std::cout << "═══════════════════════════════════════════════════════════════" << std::endl;
+    std::cout << std::endl;
+}
 
 // =============================================================================
 // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ UNICODE НА WINDOWS
@@ -240,23 +347,39 @@ EncryptionResult Encryptor::encryptFile(
     CipherType cipherType)
 {
     setlocale(LC_ALL, ".UTF8");
-    std::cout << "[ИНФО] Начало шифрования файла: " << inputPath << std::endl;
-    std::cout << "[ИНФО] Алгоритм: " << (cipherType == CipherType::AES_256_GCM ? "AES-256-GCM" : "ChaCha20-Poly1305") << std::endl;
+    
+    // Замеряем общее время операции
+    auto totalStartTime = std::chrono::high_resolution_clock::now();
+    
+    // Логируем начало операции
+    logOperationHeader("ШИФРОВАНИЕ", inputPath, 0);
+    
+    const char* cipherName = (cipherType == CipherType::AES_256_GCM) ? "AES-256-GCM" : "ChaCha20-Poly1305";
+    std::cout << "  [АЛГОРИТМ] " << cipherName << std::endl;
+    std::cout << "  [ВЫХОДНОЙ ФАЙЛ] " << outputPath << std::endl;
+    std::cout << "  [PBKDF2] " << m_pbkdf2Iterations << " итераций" << std::endl;
 
     // -------------------------------------------------------------------------
     // Шаг 1: Читаем исходный файл (с поддержкой Unicode)
     // -------------------------------------------------------------------------
+    auto readStartTime = std::chrono::high_resolution_clock::now();
+    
     std::vector<unsigned char> plaintext;
     
     if (!readFileUnicode(inputPath, plaintext))
     {
         std::cerr << "[ОШИБКА] Не удалось открыть файл: " << inputPath << std::endl;
+        logOperationEnd("ШИФРОВАНИЕ", 0, 0, 0, false);
         return EncryptionResult::FileNotFound;
     }
     
+    auto readEndTime = std::chrono::high_resolution_clock::now();
+    double readDurationMs = std::chrono::duration<double, std::milli>(readEndTime - readStartTime).count();
+    
     size_t fileSize = plaintext.size();
 
-    std::cout << "[ИНФО] Размер файла: " << fileSize << " байт" << std::endl;
+    std::cout << "  [ЧТЕНИЕ]   Файл прочитан за " << std::fixed << std::setprecision(2) << readDurationMs << " мс" << std::endl;
+    std::cout << "  [РАЗМЕР]   " << formatFileSize(fileSize) << " (" << fileSize << " байт)" << std::endl;
 
     // -------------------------------------------------------------------------
     // Шаг 2: Генерируем криптографические параметры
@@ -264,6 +387,7 @@ EncryptionResult Encryptor::encryptFile(
     
     // Генерируем соль (16 байт = 128 бит)
     // Соль нужна для PBKDF2, чтобы одинаковые пароли давали разные ключи
+    auto keyGenStartTime = std::chrono::high_resolution_clock::now();
     std::vector<unsigned char> salt = generateRandomBytes(16);
     
     // Генерируем IV/Nonce (12 байт = 96 бит)
@@ -285,11 +409,15 @@ EncryptionResult Encryptor::encryptFile(
         keyLength
     );
 
-    std::cout << "[ИНФО] Ключ сгенерирован (PBKDF2, " << m_pbkdf2Iterations << " итераций)" << std::endl;
+    auto keyGenEndTime = std::chrono::high_resolution_clock::now();
+    double keyGenDurationMs = std::chrono::duration<double, std::milli>(keyGenEndTime - keyGenStartTime).count();
+    
+    std::cout << "  [КЛЮЧ]    Сгенерирован за " << std::fixed << std::setprecision(2) << keyGenDurationMs << " мс (PBKDF2, " << m_pbkdf2Iterations << " итераций)" << std::endl;
 
     // -------------------------------------------------------------------------
     // Шаг 4: Шифруем данные
     // -------------------------------------------------------------------------
+    auto encryptStartTime = std::chrono::high_resolution_clock::now();
     std::vector<unsigned char> ciphertext;
 
     EncryptionResult result;
@@ -303,13 +431,18 @@ EncryptionResult Encryptor::encryptFile(
         result = m_chacha->encrypt(plaintext, key, iv, ciphertext);
     }
 
+    auto encryptEndTime = std::chrono::high_resolution_clock::now();
+    double encryptDurationMs = std::chrono::duration<double, std::milli>(encryptEndTime - encryptStartTime).count();
+
     if (result != EncryptionResult::Success)
     {
         std::cerr << "[ОШИБКА] Ошибка шифрования (код: " << static_cast<int>(result) << ")" << std::endl;
+        logOperationEnd("ШИФРОВАНИЕ", fileSize, 0, 0, false);
         return result;
     }
 
-    std::cout << "[ИНФО] Данные зашифрованы. Размер: " << ciphertext.size() << " байт" << std::endl;
+    std::cout << "  [ШИФРОВАНИЕ] Выполнено за " << std::fixed << std::setprecision(2) << encryptDurationMs << " мс" << std::endl;
+    std::cout << "  [РАЗМЕР]   Зашифровано: " << formatFileSize(ciphertext.size()) << " (" << ciphertext.size() << " байт)" << std::endl;
 
     // -------------------------------------------------------------------------
     // Шаг 5: Записываем зашифрованный файл (с поддержкой Unicode)
@@ -319,6 +452,7 @@ EncryptionResult Encryptor::encryptFile(
     if (ciphertext.size() > 2ULL * 1024 * 1024 * 1024)
     {
         std::cerr << "[ОШИБКА] Файл слишком большой (максимум 2 ГБ)" << std::endl;
+        logOperationEnd("ШИФРОВАНИЕ", fileSize, 0, 0, false);
         return EncryptionResult::IOError;
     }
     
@@ -344,14 +478,30 @@ EncryptionResult Encryptor::encryptFile(
     // Зашифрованные данные
     fileData.insert(fileData.end(), ciphertext.begin(), ciphertext.end());
     
+    auto writeStartTime = std::chrono::high_resolution_clock::now();
+    
     if (!writeFileUnicode(outputPath, fileData))
     {
         std::cerr << "[ОШИБКА] Не удалось создать файл: " << outputPath << std::endl;
+        logOperationEnd("ШИФРОВАНИЕ", fileSize, 0, 0, false);
         return EncryptionResult::IOError;
     }
+    
+    auto writeEndTime = std::chrono::high_resolution_clock::now();
+    double writeDurationMs = std::chrono::duration<double, std::milli>(writeEndTime - writeStartTime).count();
+    
+    auto totalEndTime = std::chrono::high_resolution_clock::now();
+    double totalDurationMs = std::chrono::duration<double, std::milli>(totalEndTime - totalStartTime).count();
 
-    std::cout << "[ИНФО] Файл сохранён: " << outputPath << std::endl;
-    std::cout << "[УСПЕХ] Шифрование завершено!" << std::endl;
+    std::cout << "  [ЗАПИСЬ]  Файл записан за " << std::fixed << std::setprecision(2) << writeDurationMs << " мс" << std::endl;
+    std::cout << "───────────────────────────────────────────────────────────────" << std::endl;
+    std::cout << "  [ИТОГО]   Время операции: " << std::fixed << std::setprecision(2) << totalDurationMs << " мс" << std::endl;
+    
+    // Вычисляем скорость
+    double speedMBps = (fileSize / (1024.0 * 1024.0)) / (totalDurationMs / 1000.0);
+    std::cout << "  [СКОРОСТЬ] " << std::fixed << std::setprecision(2) << speedMBps << " МБ/с" << std::endl;
+    
+    logOperationEnd("ШИФРОВАНИЕ", fileSize, fileData.size(), totalDurationMs, true, outputPath);
 
     return EncryptionResult::Success;
 }
@@ -379,25 +529,40 @@ EncryptionResult Encryptor::decryptFile(
     const std::string& password)
 {
     setlocale(LC_ALL, ".UTF8");
-    std::cout << "[ИНФО] Начало дешифрования файла: " << inputPath << std::endl;
+    
+    // Замеряем общее время операции
+    auto totalStartTime = std::chrono::high_resolution_clock::now();
+    
+    // Логируем начало операции
+    logOperationHeader("ДЕШИФРОВАНИЕ", inputPath, 0);
 
     // -------------------------------------------------------------------------
     // Шаг 1: Читаем зашифрованный файл (с поддержкой Unicode)
     // -------------------------------------------------------------------------
+    auto readStartTime = std::chrono::high_resolution_clock::now();
+    
     std::vector<unsigned char> fileData;
     
     if (!readFileUnicode(inputPath, fileData))
     {
         std::cerr << "[ОШИБКА] Не удалось открыть файл: " << inputPath << std::endl;
+        logOperationEnd("ДЕШИФРОВАНИЕ", 0, 0, 0, false);
         return EncryptionResult::FileNotFound;
     }
     
+    auto readEndTime = std::chrono::high_resolution_clock::now();
+    double readDurationMs = std::chrono::duration<double, std::milli>(readEndTime - readStartTime).count();
+    
     size_t fileSize = fileData.size();
+
+    std::cout << "  [ЧТЕНИЕ]   Файл прочитан за " << std::fixed << std::setprecision(2) << readDurationMs << " мс" << std::endl;
+    std::cout << "  [РАЗМЕР]   " << formatFileSize(fileSize) << " (" << fileSize << " байт)" << std::endl;
 
     // Проверяем минимальный размер (34 байта = заголовок)
     if (fileSize < 34)
     {
         std::cerr << "[ОШИБКА] Файл слишком маленький" << std::endl;
+        logOperationEnd("ДЕШИФРОВАНИЕ", fileSize, 0, 0, false);
         return EncryptionResult::InvalidFileFormat;
     }
 
@@ -405,6 +570,7 @@ EncryptionResult Encryptor::decryptFile(
     if (std::memcmp(fileData.data(), MAGIC_BYTES, 4) != 0)
     {
         std::cerr << "[ОШИБКА] Неверный формат файла (не зашифрован Sigma Encryptor?)" << std::endl;
+        logOperationEnd("ДЕШИФРОВАНИЕ", fileSize, 0, 0, false);
         return EncryptionResult::InvalidFileFormat;
     }
 
@@ -413,6 +579,7 @@ EncryptionResult Encryptor::decryptFile(
     if (version != FORMAT_VERSION)
     {
         std::cerr << "[ОШИБКА] Неподдерживаемая версия формата: " << static_cast<int>(version) << std::endl;
+        logOperationEnd("ДЕШИФРОВАНИЕ", fileSize, 0, 0, false);
         return EncryptionResult::InvalidFileFormat;
     }
 
@@ -420,7 +587,8 @@ EncryptionResult Encryptor::decryptFile(
     uint8_t cipherByte = fileData[5];
     CipherType cipherType = static_cast<CipherType>(cipherByte);
 
-    std::cout << "[ИНФО] Алгоритм: " << (cipherType == CipherType::AES_256_GCM ? "AES-256-GCM" : "ChaCha20-Poly1305") << std::endl;
+    const char* cipherName = (cipherType == CipherType::AES_256_GCM) ? "AES-256-GCM" : "ChaCha20-Poly1305";
+    std::cout << "  [АЛГОРИТМ] " << cipherName << std::endl;
 
     // Читаем соль (16 байт) - offset 6
     std::vector<unsigned char> salt(fileData.begin() + 6, fileData.begin() + 22);
@@ -432,11 +600,13 @@ EncryptionResult Encryptor::decryptFile(
     size_t headerSize = 34;
     std::vector<unsigned char> ciphertext(fileData.begin() + headerSize, fileData.end());
 
-    std::cout << "[ИНФО] Размер зашифрованных данных: " << ciphertext.size() << " байт" << std::endl;
+    std::cout << "  [РАЗМЕР]   Зашифрованные данные: " << formatFileSize(ciphertext.size()) << " (" << ciphertext.size() << " байт)" << std::endl;
 
     // -------------------------------------------------------------------------
     // Шаг 2: Выводим ключ из пароля
     // -------------------------------------------------------------------------
+    auto keyGenStartTime = std::chrono::high_resolution_clock::now();
+    
     std::vector<unsigned char> key = deriveKey(
         password,
         salt,
@@ -444,11 +614,15 @@ EncryptionResult Encryptor::decryptFile(
         32
     );
 
-    std::cout << "[ИНФО] Ключ сгенерирован" << std::endl;
+    auto keyGenEndTime = std::chrono::high_resolution_clock::now();
+    double keyGenDurationMs = std::chrono::duration<double, std::milli>(keyGenEndTime - keyGenStartTime).count();
+
+    std::cout << "  [КЛЮЧ]    Сгенерирован за " << std::fixed << std::setprecision(2) << keyGenDurationMs << " мс" << std::endl;
 
     // -------------------------------------------------------------------------
     // Шаг 3: Дешифруем данные
     // -------------------------------------------------------------------------
+    auto decryptStartTime = std::chrono::high_resolution_clock::now();
     std::vector<unsigned char> plaintext;
 
     EncryptionResult result;
@@ -462,25 +636,47 @@ EncryptionResult Encryptor::decryptFile(
         result = m_chacha->decrypt(ciphertext, key, iv, plaintext);
     }
 
+    auto decryptEndTime = std::chrono::high_resolution_clock::now();
+    double decryptDurationMs = std::chrono::duration<double, std::milli>(decryptEndTime - decryptStartTime).count();
+
     if (result != EncryptionResult::Success)
     {
         std::cerr << "[ОШИБКА] Ошибка дешифрования (неверный пароль?)" << std::endl;
+        logOperationEnd("ДЕШИФРОВАНИЕ", fileSize, 0, 0, false);
         return EncryptionResult::InvalidPassword;
     }
 
-    std::cout << "[ИНФО] Данные дешифрованы. Размер: " << plaintext.size() << " байт" << std::endl;
+    std::cout << "  [ДЕШИФРОВАНИЕ] Выполнено за " << std::fixed << std::setprecision(2) << decryptDurationMs << " мс" << std::endl;
+    std::cout << "  [РАЗМЕР]   Дешифровано: " << formatFileSize(plaintext.size()) << " (" << plaintext.size() << " байт)" << std::endl;
 
     // -------------------------------------------------------------------------
     // Шаг 4: Записываем дешифрованный файл (с поддержкой Unicode)
     // -------------------------------------------------------------------------
+    auto writeStartTime = std::chrono::high_resolution_clock::now();
+    
     if (!writeFileUnicode(outputPath, plaintext))
     {
         std::cerr << "[ОШИБКА] Не удалось создать файл: " << outputPath << std::endl;
+        logOperationEnd("ДЕШИФРОВАНИЕ", plaintext.size(), 0, 0, false);
         return EncryptionResult::IOError;
     }
+    
+    auto writeEndTime = std::chrono::high_resolution_clock::now();
+    double writeDurationMs = std::chrono::duration<double, std::milli>(writeEndTime - writeStartTime).count();
+    
+    auto totalEndTime = std::chrono::high_resolution_clock::now();
+    double totalDurationMs = std::chrono::duration<double, std::milli>(totalEndTime - totalStartTime).count();
 
-    std::cout << "[ИНФО] Файл сохранён: " << outputPath << std::endl;
-    std::cout << "[УСПЕХ] Дешифрование завершено!" << std::endl;
+    std::cout << "  [ЗАПИСЬ]  Файл записан за " << std::fixed << std::setprecision(2) << writeDurationMs << " мс" << std::endl;
+    std::cout << "───────────────────────────────────────────────────────────────" << std::endl;
+    std::cout << "  [ИТОГО]   Время операции: " << std::fixed << std::setprecision(2) << totalDurationMs << " мс" << std::endl;
+    
+    // Вычисляем скорость
+    double speedMBps = (ciphertext.size() / (1024.0 * 1024.0)) / (totalDurationMs / 1000.0);
+    std::cout << "  [СКОРОСТЬ] " << std::fixed << std::setprecision(2) << speedMBps << " МБ/с" << std::endl;
+    std::cout << "  [ВЫВОД]   " << outputPath << std::endl;
+    
+    logOperationEnd("ДЕШИФРОВАНИЕ", plaintext.size(), plaintext.size(), totalDurationMs, true, outputPath);
 
     return EncryptionResult::Success;
 }

@@ -15,7 +15,7 @@
  * - Используется PBKDF2 для надежной генерации ключа из пароля
  * - Каждый файл шифруется с уникальным IV (Initial Vector)
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 

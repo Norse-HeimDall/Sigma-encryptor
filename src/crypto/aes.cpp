@@ -339,6 +339,7 @@ void AESEncryptor::handleError(const std::string& operation) const
     
     if (error == 0)
     {
+
         std::cerr << "[ОШИБКА] AES: " << operation << " - неизвестная ошибка" << std::endl;
         return;
     }

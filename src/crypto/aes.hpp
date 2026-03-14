@@ -5,7 +5,7 @@
  * @details
  * AES-256-GCM - симметричный блочный шифр с аутентификацией.
  * 
- * @author Sigma Team
+ * @author heimdall
  * @version 1.0
  */
 
