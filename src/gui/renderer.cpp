@@ -16,7 +16,7 @@
  * - Debug callback для отладки
  * - Обработка потери контекста
  * 
- * @author Sigma Team
+ * @author heimdal
  * @version 1.0
  */
 
