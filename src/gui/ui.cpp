@@ -1,6 +1,6 @@
 /**
  * @file ui.cpp
- * @brief Реализация пользовательского интерфейса Sigma Encryptor
+ * @brief Реализация интерфейса Sigma Encryptor
  * 
  * @details
  * Этот файл содержит полную реализацию класса UI.
@@ -13,10 +13,13 @@
  * - Лог с автопрокруткой (лимит 100 строк)
  * - Безопасная очистка пароля из памяти после операций
  * - Статус операции внизу
- * 
  * @author heimdall
  * @version 4.0
  */
+
+// =======================================================================================
+// ТЕСТИРОВАТЬ НА ВИРТУАЛКЕ, СИСТЕМА ЛЕГЛА ДВА РАЗА ИЗ-ЗА КРИВОГО РЕНДЕРА
+// ==========================================================================================
 
 #include "ui.hpp"
 #include "theme.hpp"
@@ -135,7 +138,7 @@ void UI::render()
         ImGui::Spacing();
 
         // ========================================
-        // ВЫБОР ОПЕРАЦИИ (радио-кнопки)
+        // ВЫБОР ОПЕРАЦИИ 
         // ========================================
         float labelWidth = 100.0f;
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
@@ -174,7 +177,7 @@ void UI::render()
         ImGui::Spacing();
 
         // ========================================
-        // ПОЛЯ ПАРОЛЯ (с подтверждением для шифрования)
+        // ПОЛЯ ПАРОЛЯ 
         // ========================================
         ImGui::Text("Пароль:");
         ImGui::SameLine(labelWidth);
@@ -205,7 +208,7 @@ void UI::render()
         ImGui::Spacing();
 
         // ========================================
-        // ВЫБОР АЛГОРИТМА (только шифрование)
+        // ВЫБОР АЛГОРИТМА 
         // ========================================
         if (m_selectedOperation == 0)
         {
@@ -262,7 +265,7 @@ void UI::render()
         ImGui::Spacing();
 
         // ========================================
-        // ЛОГ ОПЕРАЦИЙ (Child окно с прокруткой)
+        // ЛОГ ОПЕРАЦИЙ 
         // ========================================
         ImGui::Text("Лог операций:");
         ImGui::Separator();
@@ -321,7 +324,7 @@ void UI::performEncryption()
     if (!canPerformOperation()) return;
     
     addLogMessage("═══════════════════════════════════════════");
-    addLogMessage("🚀 Начало шифрования...");
+    addLogMessage(" Начало шифрования...");
     
     std::string inputPath = m_filePath;
     std::string outputPath = inputPath + ".sge";
@@ -342,14 +345,14 @@ void UI::performEncryption()
     
     if (result == EncryptionResult::Success)
     {
-        addLogMessage("✅ Файл успешно зашифрован!");
-        addLogMessage("   📁 Выходной файл: " + outputPath);
-        addLogMessage("   ⏱️  Время: " + std::to_string(static_cast<int>(durationMs)) + " мс");
+        addLogMessage(" Файл успешно зашифрован!");
+        addLogMessage("    Выходной файл: " + outputPath);
+        addLogMessage("   ⏱  Время: " + std::to_string(static_cast<int>(durationMs)) + " мс");
         m_statusText = "Шифрование завершено успешно";
     }
     else
     {
-        addLogMessage("❌ Ошибка шифрования (код: " + std::to_string(static_cast<int>(result)) + ")");
+        addLogMessage(" Ошибка шифрования (код: " + std::to_string(static_cast<int>(result)) + ")");
         m_statusText = "Ошибка шифрования";
     }
     
@@ -365,7 +368,7 @@ void UI::performDecryption()
     if (!canPerformOperation()) return;
     
     addLogMessage("═══════════════════════════════════════════");
-    addLogMessage("🔓 Начало дешифрования...");
+    addLogMessage(" Начало дешифрования...");
     
     std::string inputPath = m_filePath;
     std::string outputPath = inputPath;
@@ -390,14 +393,14 @@ void UI::performDecryption()
     
     if (result == EncryptionResult::Success)
     {
-        addLogMessage("✅ Файл дешифрован: " + outputPath);
+        addLogMessage(" Файл дешифрован: " + outputPath);
         m_statusText = "Дешифрование завершено";
     }
     else
     {
         std::string errorMsg = (result == EncryptionResult::InvalidPassword) ? 
             "Неверный пароль" : "Ошибка дешифрования";
-        addLogMessage("❌ " + errorMsg);
+        addLogMessage(" " + errorMsg);
         m_statusText = errorMsg;
     }
     

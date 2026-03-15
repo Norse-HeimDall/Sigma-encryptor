@@ -15,7 +15,7 @@
  * @version 1.0
  */
 
-#include <iostream>     // Стандартный ввод/вывод
+#include <iostream>     
 #include <memory>       // Умные указатели
 #include <stdexcept>    // Исключения стандартной библиотеки
 #include <clocale>      // Для setlocale

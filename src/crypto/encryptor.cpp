@@ -21,16 +21,13 @@
  * @version 1.0
  */
 
-// Заголовочный файл класса
 #include "encryptor.hpp"
 
-// Заголовочные файлы OpenSSL
 #include <openssl/evp.h>      // High-level EVP интерфейс (шифрование)
 #include <openssl/kdf.h>      // Key Derivation Functions (PBKDF2)
 #include <openssl/rand.h>     // Криптографический генератор случайных чисел
 #include <openssl/err.h>      // Обработка ошибок OpenSSL
 
-// Стандартные библиотеки
 #include <iostream>           // Для отладочного вывода
 #include <fstream>            // Работа с файлами
 #include <sstream>            // Строковые потоки
@@ -38,12 +35,10 @@
 #include <chrono>             // Для измерения времени
 #include <ctime>              // Для локального времени
 
-// Windows API для Unicode файлов
 #ifdef _WIN32
     #include <windows.h>
 #endif
 
-// Подключаем реализации алгоритмов
 #include "aes.hpp"
 #include "chacha20.hpp"
 

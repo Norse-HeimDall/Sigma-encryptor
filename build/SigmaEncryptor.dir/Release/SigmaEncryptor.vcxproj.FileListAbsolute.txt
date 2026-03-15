@@ -1,3 +1,0 @@
-C:\dev\repos\C++\Sigma encyptor 4.0\build\bin\Release\glfw3.dll
-C:\dev\repos\C++\Sigma encyptor 4.0\build\bin\Release\libcrypto-3-x64.dll
-C:\dev\repos\C++\Sigma encyptor 4.0\build\SigmaEncryptor.dir\Release\SigmaEnc.24C2CEBF.Up2Date

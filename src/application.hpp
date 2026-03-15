@@ -18,13 +18,13 @@
 #ifndef SIGMA_APPLICATION_HPP
 #define SIGMA_APPLICATION_HPP
 
-// Стандартные библиотеки C++
-#include <string>       // Строки std::string
+
+#include <string>       
 #include <memory>       // Умные указатели
-#include <vector>       // Векторы
+#include <vector>       
 
 // GLFW - библиотека для создания окон и обработки ввода
-// GLFW автоматически включит заголовочные файлы OpenGL
+// автоматически включит заголовочные файлы OpenGL
 #include <GLFW/glfw3.h>
 
 // Предварительные объявления классов
