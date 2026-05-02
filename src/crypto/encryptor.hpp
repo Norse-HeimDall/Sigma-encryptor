@@ -1,307 +1,160 @@
 /**
  * @file encryptor.hpp
- * @brief Заголовочный файл главного класса шифрования Sigma Encryptor
+ * @brief Публичный интерфейс криптографического ядра Sigma.
  * 
- * Этот файл содержит объявление класса Encryptor, который является
- * основным интерфейсом для всех криптографических операций.
- * 
- * Класс поддерживает несколько алгоритмов шифрования:
- * - AES-256-GCM (Advanced Encryption Standard в режиме Galois/Counter Mode)
- * - ChaCha20-Poly1305 (современный потоковый шифр с аутентификацией)
- * 
- * Особенности:
- * - Используется пароль пользователя для генерации ключа
- * - Применяется соль для защиты от rainbow table атак
- * - Используется PBKDF2 для надежной генерации ключа из пароля
- * - Каждый файл шифруется с уникальным IV (Initial Vector)
+ * Данный заголовочный файл определяет основной класс Encryptor, который
+ * объединяет AES и ChaCha20, а также управляет метаданными файлов.
  * 
  * @author heimdall
- * @version 1.0
  */
 
+#define SIGMA_STATIC
 #ifndef SIGMA_ENCRYPTOR_HPP
 #define SIGMA_ENCRYPTOR_HPP
 
-// инклюды
-#include <string>       // Для std::string
-#include <vector>       // Для std::vector
-#include <memory>       // Для умных указателей
-#include <cstdint>      // Для uint8_t, uint16_t и т.д.
-#include <functional>   // Для std::function (callback прогресса)
+#include <cstdint>
+#include <filesystem>
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
 
-
-// =========================================================================
-// ПОТОМ ПОМЕНЯТЬ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// =================================================================================
-
-// Определение макросов экспорта/импорта DLL (для Windows)
-// Для статической линковки макрос пустой
-#ifdef _WIN32
+/**
+ * @brief Макросы управления видимостью API.
+ * 
+ * Позволяют собирать проект как в виде статической библиотеки, так и в виде
+ * динамической (DLL/SO) с правильным экспортом символов.
+ */
+#if defined(SIGMA_STATIC)
+    #define SIGMA_API
+#elif defined(_WIN32)
     #ifdef SIGMA_EXPORTS
-        // Экспорт из DLL (когда мы компилируем библиотеку)
         #define SIGMA_API __declspec(dllexport)
     #else
-        // Для статической линковки используем пустой макрос
-        #define SIGMA_API
+        #define SIGMA_API __declspec(dllimport)
     #endif
 #else
-    // Для других платформ макрос пустой
-    #define SIGMA_API
+    #define SIGMA_API __attribute__((visibility("default")))
 #endif
 
 namespace sigma
 {
 
-// Предварительные объявления классов алгоритмов
+// Упреждающие объявления для сокрытия реализации (Pimpl-like approach)
 class AESEncryptor;
 class ChaCha20Encryptor;
 
 /**
  * @enum CipherType
- * @brief Перечисление поддерживаемых типов шифрования
- * 
- * Определяет доступные алгоритмы шифрования в приложении.
- * Каждый алгоритм имеет свои преимущества:
- * - AES: стандарт, проверенный временем, аппаратное ускорение
- * - ChaCha20: современный, быстрый, устойчивый к атакам
+ * @brief Поддерживаемые алгоритмы шифрования.
  */
-enum class CipherType
-{
-    AES_256_GCM,        // AES 256-bit Galois/Counter Mode
-    ChaCha20_Poly1305   // ChaCha20 с аутентификацией Poly1305
+enum class CipherType : uint8_t {
+    AES_256_GCM,        ///< Стандарт AES в режиме GCM (аппаратное ускорение).
+    ChaCha20_Poly1305   ///< Современный потоковый шифр (высокая скорость на CPU).
 };
 
 /**
- * @enum class EncryptionResult
- * @brief Результат операции шифрования/дешифрования
- * 
- * Используется для возврата статуса операции
+ * @enum EncryptionResult
+ * @brief Коды возврата для обработки ошибок.
  */
-enum class EncryptionResult
-{
-    Success,            // Операция выполнена успешно
-    InvalidPassword,    // Неверный пароль
-    FileNotFound,       // Файл не найден
-    InvalidFileFormat,  // Формат файла некорректен
-    EncryptionFailed,   // Ошибка при шифровании
-    DecryptionFailed,   // Ошибка при дешифровании
-    IOError,            // Ошибка ввода/вывода
-    UnknownError        // Неизвестная ошибка
-};
-
-/**
- * @struct EncryptionOptions
- * @brief Настройки для операции шифрования/дешифрования
- * 
- * Структура содержит все параметры, необходимые для
- * шифрования или дешифрования файла.
- */
-struct EncryptionOptions
-{
-    // Тип шифрования (AES или ChaCha20)
-    CipherType cipherType = CipherType::AES_256_GCM;
-    
-    // Пароль пользователя (будет хеширован для получения ключа)
-    std::string password;
-    
-    // Соль для PBKDF2 (16 байт, генерируется случайно при шифровании)
-    // При дешифровании соль читается из зашифрованного файла
-    std::vector<unsigned char> salt;
-    
-    // Инициализирующий вектор (IV/Nonce) - уникален для каждого файла
-    // 12 байт для GCM, 12 байт для ChaCha20
-    std::vector<unsigned char> iv;
-    
-    // Количество итераций PBKDF2 (больше = безопаснее, но медленнее)
-    // Рекомендуется 100000+ для паролей
-    int pbkdf2Iterations = 100000;
+enum class EncryptionResult : uint8_t {
+    Success = 0,        ///< Операция завершена успешно.
+    InvalidPassword,    ///< Неверный пароль или данные повреждены.
+    FileNotFound,       ///< Указанный файл не найден.
+    InvalidFileFormat,  ///< Файл не является архивом Sigma или версия не поддерживается.
+    EncryptionFailed,   ///< Внутренняя ошибка при зашифровке.
+    DecryptionFailed,   ///< Внутренняя ошибка при расшифровке.
+    IOError,            ///< Ошибка доступа к диску (чтение/запись).
+    UnknownError        ///< Непредвиденная системная ошибка.
 };
 
 /**
  * @class Encryptor
- * @brief Главный класс для шифрования и дешифрования файлов
+ * @brief Главный высокоуровневый класс для управления шифрованием файлов.
  * 
- * Этот класс инкапсулирует всю логику шифрования.
- * Он управляет алгоритмами и предоставляет
- * единый интерфейс для операций шифрования.
- * 
- * Пример использования:
- * @code
- * sigma::Encryptor enc;
- * 
- * // Шифрование файла
- * auto result = enc.encryptFile("input.txt", "output.enc", "myPassword", 
- *                                sigma::CipherType::AES_256_GCM);
- * 
- * // Дешифрование файла  
- * auto result2 = enc.decryptFile("output.enc", "decrypted.txt", "myPassword");
- * @endcode
+ * Обеспечивает безопасное преобразование пароля в ключ через PBKDF2 и
+ * управляет жизненным циклом криптографических движков.
  */
 class SIGMA_API Encryptor
 {
 public:
     /**
-     * @brief Конструктор по умолчанию
-     * 
-     * Инициализирует внутренние компоненты.
+     * @brief Тип обратного вызова для отслеживания прогресса (полезно для GUI).
      */
-    Encryptor();
+    using ProgressCallback = std::function<void(uint64_t current, uint64_t total, void* userData)>;
 
-    /**
-     * @brief Деструктор
-     * 
-     * Освобождает ресурсы.
-     */
+    Encryptor();
     ~Encryptor();
 
+    // Запрет копирования: каждый экземпляр владеет уникальными ресурсами OpenSSL
+    Encryptor(const Encryptor&) = delete;
+    Encryptor& operator=(const Encryptor&) = delete;
+
     /**
-     * @brief Шифрует файл
+     * @brief Зашифровывает файл и сохраняет его в формате Sigma.
      * 
-     * Читает исходный файл, шифрует его содержимое и записывает
-     * результат в выходной файл. Выходной файл имеет следующую структуру:
-     * 
-     * [4 байта - magic bytes: "SGE1"]
-     * [1 байт - версия формата: 0x01]
-     * [1 байт - тип шифрования]
-     * [16 байт - соль для PBKDF2]
-     * [12 байт - IV/Nonce]
-     * [N байт - зашифрованные данные с аутентификацией]
-     * 
-     * @param inputPath Путь к исходному (незашифрованному) файлу
-     * @param outputPath Путь для сохранения зашифрованного файла
-     * @param password Пароль для шифрования
-     * @param cipherType Алгоритм шифрования
-     * @return EncryptionResult Результат операции
+     * @param inputPath Путь к исходному файлу.
+     * @param outputPath Путь к выходному .sigma файлу.
+     * @param password Пароль пользователя.
+     * @param type Выбранный алгоритм (по умолчанию AES-GCM).
      */
-    EncryptionResult encryptFile(
-        const std::string& inputPath,
-        const std::string& outputPath,
+    [[nodiscard]] EncryptionResult encryptFile(
+        const std::filesystem::path& inputPath,
+        const std::filesystem::path& outputPath,
         const std::string& password,
-        CipherType cipherType = CipherType::AES_256_GCM
+        CipherType type = CipherType::AES_256_GCM
     );
 
     /**
-     * @brief Дешифрует файл
+     * @brief Расшифровывает файл, проверяя его целостность.
      * 
-     * Читает зашифрованный файл, дешифрует его и записывает
-     * результат в выходной файл. Автоматически определяет
-     * тип шифрования по заголовку файла.
-     * 
-     * @param inputPath Путь к зашифрованному файлу
-     * @param outputPath Путь для сохранения дешифрованного файла
-     * @param password Пароль для дешифрования
-     * @return EncryptionResult Результат операции
+     * @param inputPath Путь к зашифрованному файлу.
+     * @param outputPath Путь для сохранения результата.
+     * @param password Пароль пользователя.
      */
-    EncryptionResult decryptFile(
-        const std::string& inputPath,
-        const std::string& outputPath,
+    [[nodiscard]] EncryptionResult decryptFile(
+        const std::filesystem::path& inputPath,
+        const std::filesystem::path& outputPath,
         const std::string& password
     );
 
     /**
-     * @brief Проверяет, является ли файл зашифрованным
-     * 
-     * Читает первые байты файла и проверяет наличие
-     * сигнатуры "SGE1" (Sigma Encryptor v1)
-     * 
-     * @param filePath Путь к файлу
-     * @return true если файл зашифрован нашим приложением
-     * @return false если файл не зашифрован или имеет неверный формат
+     * @brief Проверяет, является ли файл зашифрованным Sigma архивом.
      */
-    bool isEncrypted(const std::string& filePath) const;
+    [[nodiscard]] bool isEncrypted(const std::filesystem::path& filePath) const;
 
     /**
-     * @brief Получает тип шифрования зашифрованного файла
-     * 
-     * @param filePath Путь к зашифрованному файлу
-     * @return CipherType тип шифрования или AES_256_GCM по умолчанию
+     * @brief Извлекает тип алгоритма из заголовка файла.
      */
-    CipherType getCipherType(const std::string& filePath) const;
-
+    [[nodiscard]] CipherType getCipherType(const std::filesystem::path& filePath) const;
+    
     /**
-     * @brief Устанавливает количество итераций PBKDF2
-     * 
-     * Большее количество итераций = более безопасный ключ,
-     * но более медленная скорость шифрования/дешифрования.
-     * 
-     * @param iterations Количество итераций (минимум 10000)
+     * @brief Настройка сложности PBKDF2.
+     * @param iterations Количество итераций (рекомендуется от 100,000).
      */
     void setPBKDF2Iterations(int iterations);
 
-    // =========================================================================
-    // CALLBACKS ПРОГРЕССА
-    // =========================================================================
-    
     /**
-     * @brief Тип функции callback для прогресса
-     * @param current Текущее значение (0-100)
-     * @param total Общее значение
-     * @param userData Пользовательские данные
-     */
-    using ProgressCallback = std::function<void(size_t current, size_t total, void* userData)>;
-    
-    /**
-     * @brief Устанавливает callback для отображения прогресса
-     * @param callback Функция callback
-     * @param userData Пользовательские данные
+     * @brief Установка функции обратного вызова для мониторинга прогресса.
      */
     void setProgressCallback(ProgressCallback callback, void* userData = nullptr);
 
 private:
-    /**
-     * @brief Генерирует ключ из пароля
-     * 
-     * Использует PBKDF2 (Password-Based Key Derivation Function 2)
-     * для генерации криптографически стойкого ключа из пароля.
-     * 
-     * PBKDF2 - это стандарт для генерации ключей
-     * из паролей. Он использует:
-     * - Соль (salt) - случайные данные для защиты от rainbow tables
-     * - Итерации - для увеличения времени вычисления (защита от брутфорса)
-     * - Хеш-функцию (SHA-256 в нашем случае)
-     * 
-     * @param password Пароль пользователя
-     * @param salt Соль (должна быть уникальной для каждого файла)
-     * @param iterations Количество итераций
-     * @param keyLength Длина ключа в байтах (32 для AES-256, 32 для ChaCha20)
-     * @return Вектор с ключом
-     */
-    std::vector<unsigned char> deriveKey(
-        const std::string& password,
-        const std::vector<unsigned char>& salt,
-        int iterations,
-        size_t keyLength
-    ) const;
+    /// Деривация ключа из пароля и соли (PBKDF2-HMAC-SHA256).
+    std::vector<uint8_t> deriveKey(const std::string& password, const std::vector<uint8_t>& salt, int iterations, size_t keyLength) const;
+    
+    /// Генерация криптографически стойких случайных байтов (CSPRNG).
+    std::vector<uint8_t> generateRandomBytes(size_t length) const;
 
-    /**
-     * @brief Генерирует случайные байты
-     * 
-     * Использует криптографически стойкий генератор случайных чисел
-     * (CSPRNG - Cryptographically Secure Pseudo-Random Number Generator)
-     * 
-     * @param length Количество байт для генерации
-     * @return Вектор со случайными байтами
-     */
-    std::vector<unsigned char> generateRandomBytes(size_t length) const;
+    std::unique_ptr<AESEncryptor> m_aes;
+    std::unique_ptr<ChaCha20Encryptor> m_chacha;
 
-    // Уникальные указатели на реализации алгоритмов
-    // Используем unique_ptr для автоматического управления памятью
-    std::unique_ptr<AESEncryptor> m_aes;         // AES реализация
-    std::unique_ptr<ChaCha20Encryptor> m_chacha; // ChaCha20 реализация
-
-    // Количество итераций PBKDF2
-    int m_pbkdf2Iterations = 100000;
-
-    // Callback для прогресса
+    int m_pbkdf2Iterations = 100'000; ///< Значение по умолчанию для защиты от брутфорса.
     ProgressCallback m_progressCallback = nullptr;
     void* m_progressUserData = nullptr;
 
-    // Magic bytes для идентификации зашифрованных файлов
-    // "SGE1" = Sigma G Encryptor version 1
-    static constexpr const char* MAGIC_BYTES = "SGE1";
-    
-    // Версия формата файла
-    static constexpr uint8_t FORMAT_VERSION = 0x01;
+    static const char* const MAGIC_BYTES;  ///< "SGE1" - идентификатор формата.
+    static const uint8_t FORMAT_VERSION;   ///< Текущая версия структуры данных.
 };
 
 } // namespace sigma

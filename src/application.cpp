@@ -1,43 +1,30 @@
 /**
  * @file application.cpp
- * @brief Реализация главного класса приложения Sigma Encryptor
- * 
- * Этот файл содержит реализацию методов класса Application,
- * которые управляют инициализацией, главным циклом и очисткой ресурсов.
- * 
- * Меры безопасности для защиты системы:
- * - V-Sync: ограничение FPS до частоты монитора
- * - Энергоэффективность: использование glfwWaitEventsTimeout
- * - Обработка сворачивания: пропуск рендеринга при свернутом окне
- * - Отладка OpenGL: вывод ошибок в консоль
- * Потом надо добавить возможность регулирования пользователем этих настроек. Может хочет себе тоже так скажем видеокарту протестировать
+ * @brief Реализация жизненного цикла графического приложения Sigma Encryptor.
  * @author heimdall
- * @version 1.0
  */
 
-
 #include "application.hpp"
+#include "gui/renderer.hpp"
+#include "gui/ui.hpp"
 
+#include <iostream>
+#include <cstring>
+#include <thread>
+#include <chrono>
 
-#include "gui/renderer.hpp"   // Рендерер
-#include "gui/ui.hpp"         // Пользовательский интерфейс
-
-
-#include <iostream>   // Вывод в консоль
-#include <cstring>    // memset
-#include <thread>     // std::this_thread::sleep_for
-#include <chrono>     // std::chrono
-
-// GLFW - библиотеку для создания окон и обработки ввода
 #include <GLFW/glfw3.h>
 
 namespace sigma
 {
 
 // ============================================================================
-// КОНСТРУКТОР
+// КОНСТРУКТОР И ДЕСТРУКТОР
 // ============================================================================
 
+/**
+ * @brief Создает объект приложения, устанавливая начальное состояние.
+ */
 Application::Application()
     : m_state(AppState::Running)
     , m_window(nullptr)
@@ -46,10 +33,9 @@ Application::Application()
     std::cout << "[ИНФО] Объект Application создан..." << std::endl;
 }
 
-// ============================================================================
-// ДЕСТРУКТОР
-// ============================================================================
-
+/**
+ * @brief Гарантирует корректную очистку ресурсов перед уничтожением объекта.
+ */
 Application::~Application()
 {
     cleanup();
@@ -57,48 +43,37 @@ Application::~Application()
 }
 
 // ============================================================================
-// ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
+// ИНИЦИАЛИЗАЦИЯ
 // ============================================================================
 
+/**
+ * @brief Инициализация графической подсистемы.
+ * 
+ * Настраивает GLFW, создает контекст OpenGL 3.3 Core Profile и 
+ * инициализирует компоненты рендеринга и UI.
+ * 
+ * @return true если инициализация прошла успешно.
+ */
 bool Application::initialize()
 {
     std::cout << "[ИНФО] Начало инициализации приложения..." << std::endl;
 
-    // -------------------------------------------------------------------------
-    // Шаг 1: Инициализация библиотеки GLFW
-    // -------------------------------------------------------------------------
-    
     if (!glfwInit())
     {
         std::cerr << "[ОШИБКА] Не удалось инициализировать GLFW" << std::endl;
         return false;
     }
-    
-    std::cout << "[ИНФО] GLFW инициализирован" << std::endl;
 
-    // -------------------------------------------------------------------------
-    // Шаг 2: Настройка параметров окна GLFW
-    // -------------------------------------------------------------------------
-    
-    // Устанавливаем профиль OpenGL как "Core Profile"
+    // Настройка параметров графического контекста (OpenGL 3.3 Core)
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-    // Устанавливаем версию OpenGL - 3.3
-    // Используем числовые значения вместо констант GLFW из-за конфликта с Windows SDK
-    glfwWindowHint(0x00022002, 3);  // GLFW_OPENGL_MAJOR_VERSION
-    glfwWindowHint(0x00022003, 3);  // GLFW_OPENGL_MINOR_VERSION
-
-    // -------------------------------------------------------------------------
-    // Шаг 3: Создание окна
-    // -------------------------------------------------------------------------
-    
-    m_window = glfwCreateWindow(
-        m_width,              
-        m_height,             
-        m_title.c_str(),      
-        nullptr,              
-        nullptr               
-    );
+    // Создание главного окна
+    m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
 
     if (m_window == nullptr)
     {
@@ -106,74 +81,36 @@ bool Application::initialize()
         glfwTerminate();
         return false;
     }
-    
-    std::cout << "[ИНФО] Окно GLFW создано (" << m_width << "x" << m_height << ")" << std::endl;
 
-    // -------------------------------------------------------------------------
-    // Шаг 4: Настройка текущего контекста OpenGL
-    // -------------------------------------------------------------------------
-    
     glfwMakeContextCurrent(m_window);
 
-    // -------------------------------------------------------------------------
-    // МЕРА БЕЗОПАСНОСТИ #1: V-Sync (Ограничение FPS)
-    // -------------------------------------------------------------------------
+    // ОПТИМИЗАЦИЯ: Синхронизация с частотой обновления монитора (V-Sync)
+    // Предотвращает разрывы изображения и излишнюю нагрузку на GPU.
     glfwSwapInterval(1);
-    std::cout << "[ИНФО] V-Sync включен (FPS ограничен до частоты монитора)" << std::endl;
+    std::cout << "[ИНФО] V-Sync включен" << std::endl;
 
-    // -------------------------------------------------------------------------
-    // МЕРА БЕЗОПАСНОСТИ #5: Отладка OpenGL
-    // -------------------------------------------------------------------------
-    
-    // Выводим информацию о OpenGL
-    const GLubyte* renderer = glGetString(GL_RENDERER);
-    const GLubyte* version = glGetString(GL_VERSION);
-    
-    if (renderer)
-        std::cout << "[ИНФО] OpenGL Renderer: " << renderer << std::endl;
-    if (version)
-        std::cout << "[ИНФО] OpenGL Version: " << version << std::endl;
+    // Сбор отладочной информации о видеодрайвере
+    const GLubyte* gl_renderer = glGetString(GL_RENDERER);
+    if (gl_renderer) std::cout << "[ИНФО] OpenGL Renderer: " << gl_renderer << std::endl;
 
-    // -------------------------------------------------------------------------
-    // Шаг 5: Создание рендерера
-    // -------------------------------------------------------------------------
-    
+    // Инициализация системы отрисовки (интеграция с ImGui)
     m_renderer = std::make_unique<Renderer>();
-
     if (!m_renderer->initialize(m_window))
     {
         std::cerr << "[ОШИБКА] Не удалось инициализировать рендерер" << std::endl;
-        glfwTerminate();
         return false;
     }
-    
-    std::cout << "[ИНФО] Рендерер инициализирован" << std::endl;
 
-    // -------------------------------------------------------------------------
-    // Шаг 6: Создание UI
-    // -------------------------------------------------------------------------
-    
+    // Создание слоя пользовательского интерфейса
     m_ui = std::make_unique<UI>();
     m_ui->initialize();
-    
-    std::cout << "[ИНФО] UI инициализирован" << std::endl;
 
-    // -------------------------------------------------------------------------
-    // Шаг 7: Настройка callback для закрытия окна
-    // -------------------------------------------------------------------------
-    
+    // Регистрация обратного вызова для безопасного закрытия приложения
     glfwSetWindowUserPointer(m_window, this);
-    
-    auto windowCloseCallback = [](GLFWwindow* window)
-    {
-        Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-        if (app)
-        {
-            app->shutdown();
-        }
-    };
-    
-    glfwSetWindowCloseCallback(m_window, windowCloseCallback);
+    glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window) {
+        auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+        if (app) app->shutdown();
+    });
 
     std::cout << "[ИНФО] Инициализация завершена успешно" << std::endl;
     return true;
@@ -183,160 +120,99 @@ bool Application::initialize()
 // ГЛАВНЫЙ ЦИКЛ ПРИЛОЖЕНИЯ
 // ============================================================================
 
+/**
+ * @brief Главный цикл обработки (Game Loop).
+ */
 void Application::run()
 {
-    std::cout << "[ИНФО] Запуск главного цикла..." << std::endl;
-    
     m_state = AppState::Running;
 
-    // Главный цикл приложения
     while (m_state == AppState::Running && !glfwWindowShouldClose(m_window))
     {
-        // Обрабатываем события
         processEvents();
-        
-        // Обновляем состояние
         update();
-        
-        // Рендерим кадр
         render();
-        
-        // Обновляем состояние после обработки
-        if (m_shouldClose)
-        {
-            m_state = AppState::ShuttingDown;
-        }
+
+        if (m_shouldClose) m_state = AppState::ShuttingDown;
     }
-    
-    std::cout << "[ИНФО] Выход из главного цикла" << std::endl;
 }
 
-// ============================================================================
-// ОБРАБОТКА СОБЫТИЙ
-// ============================================================================
-
+/**
+ * @brief Обработка системных событий ввода.
+ * 
+ * ОПТИМИЗАЦИЯ: Ожидание событий с таймаутом (7мс) позволяет снизить
+ * использование CPU, если нету взаимодействия с окном.
+ */
 void Application::processEvents()
 {
-    // Используем энергоэффективный метод опроса событий
-    // Таймаут 0.007 секунд = 7 миллисекунд ≈ 144 FPS
     glfwWaitEventsTimeout(0.007);
 }
 
-// ============================================================================
-// ОБНОВЛЕНИЕ СОСТОЯНИЯ
-// ============================================================================
-
 void Application::update()
 {
-    // Логика обновления может быть добавлена здесь (анимации, таймеры и т.д.)
+    // Место для обновления логики UI или фоновых задач(прогресс бар. пока отсуствует, потом доделаю)
 }
 
-// ============================================================================
-// РЕНДЕРИНГ КАДРА
-// ============================================================================
-
+/**
+ * @brief Отрисовка текущего кадра.
+ * 
+ * ОПТИМИЗАЦИЯ: Если окно свернуто, отрисовка приостанавливается,
+ * чтобы сэкономить ресурсы системы.
+ */
 void Application::render()
 {
-    // -------------------------------------------------------------------------
-    // МЕРА БЕЗОПАСНОСТИ #3: Проверка состояния окна
-    // -------------------------------------------------------------------------
-    
-    if (m_window != nullptr)
+    if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED))
     {
-        // Проверяем, не свернуто ли окно
-        int isIconified = glfwGetWindowAttrib(m_window, GLFW_ICONIFIED);
-        
-        // Если окно свернуто - пропускаем рендеринг и даём отдохнуть системе
-        if (isIconified == GLFW_TRUE)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            return; // Выходим из render() без отрисовки
-        }
+        // Спим 100мс, чтобы не нагружать цикл в свернутом режиме
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        return;
     }
-    
-    // -------------------------------------------------------------------------
-    // Нормальный рендеринг (выполняется только когда окно видимо)
-    // -------------------------------------------------------------------------
-    
-    // Очищаем экран (цвет фона)
-    glClearColor(0.129f, 0.129f, 0.149f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
 
-    // Начинаем новый кадр ImGui
-    m_renderer->beginFrame();
+    m_renderer->beginFrame(); // Подготовка буферов
     
-    // Рендерим UI
-    if (m_ui)
-    {
-        m_ui->render();
-    }
+    if (m_ui) m_ui->render(); // Рисование виджетов ImGui
+
+    m_renderer->endFrame();   // Финализация кадра
     
-    // Завершаем кадр и выводим на экран
-    m_renderer->endFrame();
-    
-    // Swap buffers - показываем нарисованный кадр
-    glfwSwapBuffers(m_window);
+    glfwSwapBuffers(m_window); // Вывод кадра на экран
 }
 
 // ============================================================================
-// ОСТАНОВКА ПРИЛОЖЕНИЯ
+// ЗАВЕРШЕНИЕ
 // ============================================================================
 
+/**
+ * @brief Инициирует процесс выхода из приложения.
+ */
 void Application::shutdown()
 {
-    std::cout << "[ИНФО] Запрос на завершение приложения" << std::endl;
     m_shouldClose = true;
     m_state = AppState::ShuttingDown;
 }
 
-// ============================================================================
-// ОЧИСТКА РЕСУРСОВ
-// ============================================================================
-
+/**
+ * @brief Безопасное освобождение всех выделенных ресурсов.
+ */
 void Application::cleanup()
 {
-    std::cout << "[INFO] Starting resource cleanup..." << std::endl;
+    std::cout << "[ИНФО] Очистка ресурсов..." << std::endl;
 
-    // -------------------------------------------------------------------------
-    // ВАЖНО: Очищаем рендерер ПОКА ОКНО ЕЩЁ СУЩЕСТВУЕТ!
-    // ImGui требует активный OpenGL контекст для корректного завершения
-    // -------------------------------------------------------------------------
-    
-    // Очищаем UI (внутренний ImGui контекст уже очищен через renderer)
-    if (m_ui)
-    {
-        m_ui.reset();
-        std::cout << "[INFO] UI cleaned" << std::endl;
-    }
+    if (m_ui) m_ui.reset();
 
-    // Очищаем рендерер (включая ImGui::DestroyContext)
-    // Это должно происходить ДО уничтожения окна GLFW!
     if (m_renderer)
     {
-        // Убедимся что OpenGL контекст активен перед очисткой ImGui
-        if (m_window)
-        {
-            glfwMakeContextCurrent(m_window);
-        }
-        
+        if (m_window) glfwMakeContextCurrent(m_window);
         m_renderer->shutdown();
         m_renderer.reset();
-        std::cout << "[INFO] Renderer cleaned (ImGui context destroyed)" << std::endl;
     }
 
-    // Теперь безопасно уничтожаем окно GLFW
     if (m_window)
     {
         glfwDestroyWindow(m_window);
         m_window = nullptr;
-        std::cout << "[INFO] GLFW window destroyed" << std::endl;
     }
 
-    // Завершаем GLFW ПОСЛЕ очистки всех других ресурсов
     glfwTerminate();
-    std::cout << "[INFO] GLFW terminated" << std::endl;
-    
-    m_state = AppState::ShuttingDown;
 }
 
 } // namespace sigma

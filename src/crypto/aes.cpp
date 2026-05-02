@@ -1,358 +1,296 @@
 /**
  * @file aes.cpp
- * @brief Реализация AES-256-GCM шифрования
- * 
- * @details
- * Этот файл содержит реализацию методов класса AESEncryptor.
- * Используется высокоуровневый EVP API OpenSSL для работы с AES-256-GCM.
- * 
- * AES-256-GCM - это блочный шифр в режиме GCM (Galois/Counter Mode).
- * Основные характеристики:
- * - 256-битный ключ
- * - 128-битный блок
- * - 96-битный (12 байт) IV/Nonce
- * - 128-битный (16 байт) тег аутентификации
- * - AEAD (шифрование + аутентификация)
- * 
+ * @brief Реализация симметричного шифрования AES-256 в режиме GCM (Galois/Counter Mode).
+ *  
  * @author HeimDall
- * @version 1.0
  */
 
 #include "aes.hpp"
 
-// Заголовочные файлы OpenSSL
-#include <openssl/evp.h>      // Основной интерфейс шифрования
-#include <openssl/err.h>      // Обработка ошибок
+#include <openssl/evp.h>
+#include <openssl/err.h>
 
-#include <iostream>           // Отладочный вывод
-#include <stdexcept>          // Исключения
-
-#pragma warning(disable: 4100)
+#include <iostream>
+#include <stdexcept>
 
 namespace sigma
 {
 
 // =============================================================================
-// КОНСТРУКТОР И ДЕСТРУКТОР
+// КОНСТРУКТОРЫ И ДЕСТРУКТОР
 // =============================================================================
 
 /**
- * @brief Конструктор AESEncryptor
- * 
- * Создаёт контекст EVP_CIPHER_CTX, который используется для всех
- * операций шифрования/дешифрования.
+ * @brief Инициализация объекта AES-обертки.
+ * Создает новый контекст EVP_CIPHER_CTX, который является основным объектом OpenSSL
+ * необходимый для криптографических операций.
  */
 AESEncryptor::AESEncryptor()
 {
-    setlocale(LC_ALL,"RU");
     m_context = EVP_CIPHER_CTX_new();
-    
-    if (m_context == nullptr)
+    if (!m_context)
     {
-        std::cerr << "[ОШИБКА] Не удалось создать контекст AES" << std::endl;
+        std::cerr << "[ОШИБКА] Не удалось выделить память под контекст OpenSSL EVP\n";
         handleError("EVP_CIPHER_CTX_new");
         throw std::runtime_error("Failed to create AES context");
     }
-    
-    std::cout << "[ИНФО] AES-256-GCM контекст создан" << std::endl;
 }
 
 /**
- * @brief Деструктор AESEncryptor
+ * @brief Безопасная очистка ресурсов.
  */
 AESEncryptor::~AESEncryptor()
 {
-    if (m_context != nullptr)
+    if (m_context)
     {
         EVP_CIPHER_CTX_free(m_context);
         m_context = nullptr;
-        std::cout << "[ИНФО] AES контекст освобождён" << std::endl;
     }
 }
 
+/**
+ * @brief Перемещающий конструктор.
+ * Позволяет передавать владение контекстом другому объекту без копирования.
+ */
+AESEncryptor::AESEncryptor(AESEncryptor&& other) noexcept : m_context(other.m_context)
+{
+    other.m_context = nullptr;
+}
+
+/**
+ * @brief Оператор перемещающего присваивания.
+ */
+AESEncryptor& AESEncryptor::operator=(AESEncryptor&& other) noexcept
+{
+    if (this != &other)
+    {
+        if (m_context) EVP_CIPHER_CTX_free(m_context);
+        m_context = other.m_context;
+        other.m_context = nullptr;
+    }
+    return *this;
+}
+
 // =============================================================================
-// ШИФРОВАНИЕ
+// ШИФРОВАНИЕ (ENCRYPTION)
 // =============================================================================
 
+/**
+ * @brief Шифрование данных методом AES-256-GCM.
+ * Процесс: инициализация, установку длины IV, передачу ключа/IV,
+ * само шифрование и генерация тега аутентификации.
+ */
 EncryptionResult AESEncryptor::encrypt(
     const std::vector<unsigned char>& plaintext,
     const std::vector<unsigned char>& key,
     const std::vector<unsigned char>& iv,
     std::vector<unsigned char>& ciphertext)
 {
-    // Проверяем входные данные
-    if (key.size() != 32)
+    // Валидация входных параметров согласно стандартам AES-256
+    if (key.size() != KEY_SIZE || iv.size() != IV_SIZE)
     {
-        std::cerr << "[ОШИБКА] Неверная длина ключа (ожидалось 32 байта, получено " 
-                  << key.size() << ")" << std::endl;
+        std::cerr << "[ОШИБКА] Неверные параметры: Ключ должен быть 32 байта, IV — 12 байт.\n";
         return EncryptionResult::EncryptionFailed;
     }
 
-    if (iv.size() != 12)
-    {
-        std::cerr << "[ОШИБКА] Неверная длина IV (ожидалось 12 байт, получено " 
-                  << iv.size() << ")" << std::endl;
-        return EncryptionResult::EncryptionFailed;
-    }
-
-    // Сброс контекста
+    // Сброс контекста для нового использования (позволяет переиспользовать объект)
     if (EVP_CIPHER_CTX_reset(m_context) != 1)
     {
         handleError("EVP_CIPHER_CTX_reset");
         return EncryptionResult::EncryptionFailed;
     }
 
-    // Инициализируем шифрование с алгоритмом AES-256-GCM
-    if (EVP_EncryptInit_ex(
-        m_context,
-        EVP_aes_256_gcm(),
-        nullptr,
-        nullptr,
-        nullptr) == 0)
+    /**
+     *  Инициализация операции шифрования.
+     * Мы используем AES-256 в режиме GCM.
+     */
+    if (EVP_EncryptInit_ex(m_context, EVP_aes_256_gcm(), nullptr, nullptr, nullptr) != 1)
     {
-        handleError("EVP_EncryptInit_ex (algorithm)");
+        handleError("AES Encrypt Algorithm Init");
         return EncryptionResult::EncryptionFailed;
     }
 
-    // Установка длины ключа (256 бит = 32 байта)
-    if (EVP_CIPHER_CTX_set_key_length(m_context, 32) != 1)
-    {
-        handleError("EVP_CIPHER_CTX_set_key_length");
-        return EncryptionResult::EncryptionFailed;
-    }
-
-    // Установка длины IV (96 бит = 12 байт для GCM)
-    if (EVP_CIPHER_CTX_ctrl(
-        m_context,
-        EVP_CTRL_GCM_SET_IVLEN,
-        static_cast<int>(iv.size()),
-        nullptr) == 0)
+    //  Установка длины вектора инициализации (IV). Стандарт для GCM — 12 байт (96 бит).
+    if (EVP_CIPHER_CTX_ctrl(m_context, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(iv.size()), nullptr) != 1)
     {
         handleError("EVP_CTRL_GCM_SET_IVLEN");
         return EncryptionResult::EncryptionFailed;
     }
 
-    // Устанавливаем ключ и IV
-    if (EVP_EncryptInit_ex(
-        m_context,
-        nullptr,
-        nullptr,
-        key.data(),
-        iv.data()) == 0)
+    //  Установка самого ключа и вектора инициализации.
+    if (EVP_EncryptInit_ex(m_context, nullptr, nullptr, key.data(), iv.data()) != 1)
     {
-        handleError("EVP_EncryptInit_ex (key/iv)");
+        handleError("AES Encrypt Key/IV Init");
         return EncryptionResult::EncryptionFailed;
     }
 
-    // Выделяем буфер только для зашифрованных данных (без тега)
-    // Тег аутентификации получим и добавим отдельно
+    // Резервируем память под результат
     ciphertext.resize(plaintext.size());
     
-    int outLength1 = 0;
-    int outLength2 = 0;
+    int updateLen = 0;
+    int finalLen = 0;
 
-    if (EVP_EncryptUpdate(
-        m_context,
-        ciphertext.data(),
-        &outLength1,
-        plaintext.data(),
-        static_cast<int>(plaintext.size())) == 0)
+    /**
+     *  Основной цикл шифрования. 
+     * EVP_EncryptUpdate обрабатывает данные блоками.
+     */
+    if (EVP_EncryptUpdate(m_context, ciphertext.data(), &updateLen, 
+                          plaintext.data(), static_cast<int>(plaintext.size())) != 1)
     {
         handleError("EVP_EncryptUpdate");
         return EncryptionResult::EncryptionFailed;
     }
 
-    // Финализация
-    int result = EVP_EncryptFinal_ex(
-        m_context,
-        ciphertext.data() + outLength1,
-        &outLength2);
-
-    if (result == 0)
+    /**
+     *  Финализация. 
+     * В GCM режиме здесь не создается дополнительных данных, но это важный этап завершения.
+     */
+    if (EVP_EncryptFinal_ex(m_context, ciphertext.data() + updateLen, &finalLen) != 1)
     {
         handleError("EVP_EncryptFinal_ex");
         return EncryptionResult::EncryptionFailed;
     }
 
-    // Обрезаем до реального размера зашифрованных данных
-    size_t encryptedSize = static_cast<size_t>(outLength1) + outLength2;
-    ciphertext.resize(encryptedSize);
+    ciphertext.resize(static_cast<size_t>(updateLen) + finalLen);
 
-    // Получаем тег аутентификации GCM
+    /**
+     *  Работа с тегом (Authentication Tag).
+     * GCM создает 16-байтный тег, который подтверждает, что данные не были изменены.
+     */
     std::vector<unsigned char> tag(TAG_SIZE);
-    if (EVP_CIPHER_CTX_ctrl(
-        m_context,
-        EVP_CTRL_GCM_GET_TAG,
-        TAG_SIZE,
-        tag.data()) == 0)
+    if (EVP_CIPHER_CTX_ctrl(m_context, EVP_CTRL_GCM_GET_TAG, TAG_SIZE, tag.data()) != 1)
     {
         handleError("EVP_CTRL_GCM_GET_TAG");
         return EncryptionResult::EncryptionFailed;
     }
 
-    // Добавляем тег в конец зашифрованных данных
+    /**
+     * Формирование финального пакета.
+     * Тег хранится в конце(это не обязательно, можно свободно перемешивать, но разбиратся будете сами)
+     */
     ciphertext.insert(ciphertext.end(), tag.begin(), tag.end());
-
-    std::cout << "[ИНФО] AES-GCM шифрование завершено" << std::endl;
-    std::cout << "[ИНФО] Размер данных: " << plaintext.size() 
-              << " -> " << ciphertext.size() << " байт" << std::endl;
 
     return EncryptionResult::Success;
 }
 
 // =============================================================================
-// ДЕШИФРОВАНИЕ
+// ДЕШИФРОВАНИЕ (DECRYPTION)
 // =============================================================================
 
+/**
+ * @brief Дешифрование и проверка целостности данных.
+ * Отличается от обычного режима тем, что перед завершением требует передачи тега
+ * для сверки контрольной суммы (аутентификации).
+ */
 EncryptionResult AESEncryptor::decrypt(
     const std::vector<unsigned char>& ciphertext,
     const std::vector<unsigned char>& key,
     const std::vector<unsigned char>& iv,
     std::vector<unsigned char>& plaintext)
 {
-    // Проверяем входные данные
-    if (key.size() != 32)
+    // Базовая проверка размеров
+    if (key.size() != KEY_SIZE || iv.size() != IV_SIZE)
     {
-        std::cerr << "[ОШИБКА] Неверная длина ключа" << std::endl;
         return EncryptionResult::DecryptionFailed;
     }
 
-    if (iv.size() != 12)
-    {
-        std::cerr << "[ОШИБКА] Неверная длина IV" << std::endl;
-        return EncryptionResult::DecryptionFailed;
-    }
-
+    // Шифротекст в GCM всегда содержит в конце TAG_SIZE байт тега
     if (ciphertext.size() < TAG_SIZE)
     {
-        std::cerr << "[ОШИБКА] Данные слишком короткие" << std::endl;
+        std::cerr << "[ОШИБКА] Пакет данных поврежден или слишком мал для режима GCM\n";
         return EncryptionResult::InvalidFileFormat;
     }
 
-    // Инициализация контекста для дешифрования
     if (EVP_CIPHER_CTX_reset(m_context) != 1)
     {
         handleError("EVP_CIPHER_CTX_reset");
         return EncryptionResult::DecryptionFailed;
     }
 
-    if (EVP_DecryptInit_ex(
-        m_context,
-        EVP_aes_256_gcm(),
-        nullptr,
-        nullptr,
-        nullptr) == 0)
+    // 1. Инициализация дешифратора
+    if (EVP_DecryptInit_ex(m_context, EVP_aes_256_gcm(), nullptr, nullptr, nullptr) != 1)
     {
-        handleError("EVP_DecryptInit_ex (algorithm)");
+        handleError("AES Decrypt Algorithm Init");
         return EncryptionResult::DecryptionFailed;
     }
 
-    if (EVP_CIPHER_CTX_set_key_length(m_context, 32) != 1)
-    {
-        handleError("EVP_CIPHER_CTX_set_key_length");
-        return EncryptionResult::DecryptionFailed;
-    }
-
-    if (EVP_CIPHER_CTX_ctrl(
-        m_context,
-        EVP_CTRL_GCM_SET_IVLEN,
-        static_cast<int>(iv.size()),
-        nullptr) == 0)
+    // 2. Установка параметров IV
+    if (EVP_CIPHER_CTX_ctrl(m_context, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(iv.size()), nullptr) != 1)
     {
         handleError("EVP_CTRL_GCM_SET_IVLEN");
         return EncryptionResult::DecryptionFailed;
     }
 
-    if (EVP_DecryptInit_ex(
-        m_context,
-        nullptr,
-        nullptr,
-        key.data(),
-        iv.data()) == 0)
+    // 3. Привязка ключа и IV
+    if (EVP_DecryptInit_ex(m_context, nullptr, nullptr, key.data(), iv.data()) != 1)
     {
-        handleError("EVP_DecryptInit_ex (key/iv)");
+        handleError("AES Decrypt Key/IV Init");
         return EncryptionResult::DecryptionFailed;
     }
 
-    // Установка тега для проверки (в GCM режиме тег нужно установить ДО финализации!)
-    const unsigned char* tag = ciphertext.data() + ciphertext.size() - TAG_SIZE;
+    // Рассчитываем размер чистых зашифрованных данных (без учета тега в конце)
+    size_t encryptedDataSize = ciphertext.size() - TAG_SIZE;
+    const unsigned char* tagPtr = ciphertext.data() + encryptedDataSize;
     
-    if (EVP_CIPHER_CTX_ctrl(
-        m_context,
-        EVP_CTRL_GCM_SET_TAG,
-        TAG_SIZE,
-        const_cast<unsigned char*>(tag)) == 0)
+    /**
+     * 4. Установка ожидаемого тега.
+     * В GCM-дешифровании мы должны передать тег в контекст до вызова Final.
+     */
+    if (EVP_CIPHER_CTX_ctrl(m_context, EVP_CTRL_GCM_SET_TAG, TAG_SIZE, const_cast<unsigned char*>(tagPtr)) != 1)
     {
         handleError("EVP_CTRL_GCM_SET_TAG");
         return EncryptionResult::DecryptionFailed;
     }
 
-    // Дешифрование данных
-    size_t encryptedDataSize = ciphertext.size() - TAG_SIZE;
-    
     plaintext.resize(encryptedDataSize);
     
-    int outLength1 = 0;
-    int outLength2 = 0;
+    int updateLen = 0;
+    int finalLen = 0;
 
-    if (EVP_DecryptUpdate(
-        m_context,
-        plaintext.data(),
-        &outLength1,
-        ciphertext.data(),
-        static_cast<int>(encryptedDataSize)) == 0)
+    // 5. Процесс расшифровки
+    if (EVP_DecryptUpdate(m_context, plaintext.data(), &updateLen, 
+                          ciphertext.data(), static_cast<int>(encryptedDataSize)) != 1)
     {
         handleError("EVP_DecryptUpdate");
         return EncryptionResult::DecryptionFailed;
     }
 
-    // Финализация и проверка тега
-    int result = EVP_DecryptFinal_ex(
-        m_context,
-        plaintext.data() + outLength1,
-        &outLength2);
-
-    if (result == 0)
+    /**
+     * 6. Проверка аутентичности.
+     * Если данные были изменены (хотя бы один бит), EVP_DecryptFinal_ex вернет ошибку.
+     * Это гарантирует, что мы не расшифруем нерабочий хлам при неверном пароле или поврежденном файле.
+     */
+    if (EVP_DecryptFinal_ex(m_context, plaintext.data() + updateLen, &finalLen) != 1)
     {
-        std::cerr << "[ОШИБКА] AES-GCM: Неверный тег аутентификации" << std::endl;
-        std::cerr << "[ОШИБКА] Возможно, файл был изменён или введён неверный пароль" << std::endl;
-        plaintext.clear();
+        std::cerr << "[БЕЗОПАСНОСТЬ] Сбой проверки тега! Файл изменен или введен неверный пароль.\n";
+        plaintext.clear(); 
         return EncryptionResult::InvalidPassword;
     }
 
-    plaintext.resize(static_cast<size_t>(outLength1) + outLength2);
-
-    std::cout << "[ИНФО] AES-GCM дешифрование завершено" << std::endl;
-    std::cout << "[ИНФО] Размер данных: " << ciphertext.size() 
-              << " -> " << plaintext.size() << " байт" << std::endl;
-
+    plaintext.resize(static_cast<size_t>(updateLen) + finalLen);
     return EncryptionResult::Success;
 }
 
 // =============================================================================
-// ОБРАБОТКА ОШИБОК
+// ОБРАБОТКА ОШИБОК OPENSSL
 // =============================================================================
 
+/**
+ * @brief Разбор стека ошибок OpenSSL.
+ * Криптобиблиотека ведет свой внутренний лог ошибок, который нужно вычитывать
+ * для получения понятных сообщений.
+ */
 void AESEncryptor::handleError(const std::string& operation) const
 {
     unsigned long error = ERR_get_error();
-    
-    if (error == 0)
-    {
-
-        std::cerr << "[ОШИБКА] AES: " << operation << " - неизвестная ошибка" << std::endl;
-        return;
-    }
+    if (error == 0) return;
 
     char errorBuf[256];
-    ERR_error_string_n(error, errorBuf, sizeof(errorBuf));
-    
-    std::cerr << "[ОШИБКА] AES (" << operation << "): " << errorBuf << std::endl;
-    
-    while ((error = ERR_get_error()) != 0)
+    while (error != 0)
     {
         ERR_error_string_n(error, errorBuf, sizeof(errorBuf));
-        std::cerr << "       -> " << errorBuf << std::endl;
+        std::cerr << "[КРИТИЧЕСКАЯ ОШИБКА] AES (" << operation << "): " << errorBuf << "\n";
+        error = ERR_get_error();
     }
 }
 

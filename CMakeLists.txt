@@ -1,26 +1,22 @@
-# CMakeLists.txt - Конфигурация сборки Sigma Encryptor
-# Совместим с vcpkg toolchain (portable, без hardcoded путей)
-
+# CMakeLists.txt - Sigma Encryptor (Windows Stable)
 cmake_minimum_required(VERSION 3.15)
-project(SigmaEncryptor VERSION 4.0 LANGUAGES CXX)
+project(SigmaEncryptor VERSION 1.0 LANGUAGES CXX)
 
-# C++17 стандарт
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# MSVC Runtime: DLL для vcpkg
+# Настройка MSVC Runtime для корректной работы с vcpkg и DLL
 cmake_policy(SET CMP0091 NEW)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
-# Предупреждения
+# Специфичные настройки компилятора MSVC
 if (MSVC)
     add_compile_options(/W4 /utf-8)
-else()
-    add_compile_options(-Wall -Wextra)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 # =============================================================================
-# VCPKG БИБЛИОТЕКИ (авто через toolchain)
+# ЗАВИСИМОСТИ (vcpkg автоматизирует поиск этих пакетов)
 # =============================================================================
 find_package(glfw3 CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
@@ -33,7 +29,6 @@ find_package(OpenGL REQUIRED)
 set(SOURCES
     src/main.cpp
     src/application.cpp
-    src/application.hpp
     src/gui/renderer.cpp
     src/gui/theme.cpp
     src/gui/ui.cpp
@@ -48,24 +43,27 @@ set(SOURCES
 # =============================================================================
 add_executable(SigmaEncryptor ${SOURCES})
 
-# Выход в build/bin
+# Важно: это сопоставляется с твоим макросом в encryptor.hpp
+target_compile_definitions(SigmaEncryptor PUBLIC SIGMA_STATIC)
+
+# Собираем всё в папку bin для удобства запуска
 set_target_properties(SigmaEncryptor PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
 # =============================================================================
-# LINK LIBRARIES
+# LINK LIBRARIES (Windows-specific targets)
 # =============================================================================
 target_link_libraries(SigmaEncryptor PRIVATE 
-    glfw::glfw
-    imgui::imgui
     OpenGL::GL
     OpenSSL::Crypto
     OpenSSL::SSL
+    imgui::imgui
+    glfw
 )
 
 # =============================================================================
-# INCLUDES (portable)
+# INCLUDES
 # =============================================================================
 target_include_directories(SigmaEncryptor PRIVATE 
     ${CMAKE_SOURCE_DIR}/src
@@ -74,35 +72,15 @@ target_include_directories(SigmaEncryptor PRIVATE
 )
 
 # =============================================================================
-# COPY DLLs (POST-BUILD)
+# АВТОМАТИЧЕСКОЕ КОПИРОВАНИЕ DLL
+# Это магия, которая подтянет libcrypto-3-x64.dll и другие рядом с .exe
 # =============================================================================
-if (WIN32)
-    # Авто-копирование DLL из vcpkg (стандартный способ)
-    find_file(GLFW_DLL glfw3.dll HINTS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin)
-    find_file(LIBCRYPTO libcrypto-3-x64.dll HINTS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin)
-    find_file(LIBSSL libssl-3-x64.dll HINTS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin)
+add_custom_command(TARGET SigmaEncryptor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        "$<TARGET_RUNTIME_DLLS:SigmaEncryptor>"
+        "$<TARGET_FILE_DIR:SigmaEncryptor>"
+    COMMAND_EXPAND_LISTS
+    COMMENT "Copying runtime dependencies (DLLs) to build folder..."
+)
 
-    if (GLFW_DLL)
-        add_custom_command(TARGET SigmaEncryptor POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-                "$<TARGET_FILE:glfw::glfw>" "$<TARGET_FILE_DIR:SigmaEncryptor>"
-            COMMENT "Copy glfw3.dll"
-        )
-    endif()
-    if (LIBCRYPTO AND LIBSSL)
-        add_custom_command(TARGET SigmaEncryptor POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBCRYPTO} "$<TARGET_FILE_DIR:SigmaEncryptor>"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBSSL} "$<TARGET_FILE_DIR:SigmaEncryptor>"
-            COMMENT "Copy OpenSSL DLLs"
-        )
-    endif()
-endif()
-
-# =============================================================================
-# СТАТУС
-# =============================================================================
-message(STATUS "=== Sigma Encryptor 4.0 BUILD READY ===")
-message(STATUS "Use: cmake -B build -DCMAKE_TOOLCHAIN_FILE=[vcpkg]/scripts/buildsystems/vcpkg.cmake")
-message(STATUS "    cmake --build build --config Release")
-message(STATUS "Run: build/bin/Release/SigmaEncryptor.exe")
-
+message(STATUS "=== Sigma Encryptor 4.0: Windows Build Configured ===")
