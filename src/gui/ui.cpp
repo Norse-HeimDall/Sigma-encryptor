@@ -90,9 +90,9 @@ void UI::render()
         // --- ЗАГОЛОВОК ---
         ImGui::SetCursorPosY(20);
         ImGui::PushFont(io.Fonts->Fonts[0]); // Предполагаем наличие кастомного шрифта
-        float centerX = (ImGui::GetWindowWidth() - ImGui::CalcTextSize("SIGMA ENCRYPTOR v4.0").x) * 0.5f;
+        float centerX = (ImGui::GetWindowWidth() - ImGui::CalcTextSize("SIGMA ENCRYPTOR").x) * 0.5f;
         ImGui::SetCursorPosX(centerX);
-        ImGui::TextColored(ImVec4(0.46f, 0.54f, 0.63f, 1.0f), "SIGMA ENCRYPTOR v4.0");
+        ImGui::TextColored(ImVec4(0.46f, 0.54f, 0.63f, 1.0f), "SIGMA ENCRYPTOR");
         ImGui::PopFont();
         
         ImGui::Separator();

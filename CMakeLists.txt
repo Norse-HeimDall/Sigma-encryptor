@@ -83,4 +83,4 @@ add_custom_command(TARGET SigmaEncryptor POST_BUILD
     COMMENT "Copying runtime dependencies (DLLs) to build folder..."
 )
 
-message(STATUS "=== Sigma Encryptor 4.0: Windows Build Configured ===")
+message(STATUS "=== Sigma Encryptor 1.0: Windows Build Configured ===")
