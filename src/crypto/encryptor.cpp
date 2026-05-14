@@ -110,7 +110,7 @@ EncryptionResult Encryptor::encryptFile(
 
     if (res != EncryptionResult::Success) return res;
 
-    // Запись зашифрованного файла в формате Sigma
+    // Запись зашифрованного файла в формате Sigma(бинарника)
     std::ofstream os(outputPath, std::ios::binary);
     if (!os) return EncryptionResult::IOError;
 

@@ -103,7 +103,6 @@ std::string FileDialog::saveFile(const std::string& title,
 #ifdef _WIN32
     OPENFILENAMEW ofn;
     wchar_t fileName[MAX_PATH] = L"";
-    
     if (!defaultName.empty())
     {
         std::wstring wDefaultName = utf8ToWstring(defaultName);

@@ -8,7 +8,7 @@
  * @author heimdall
  */
 
-#define SIGMA_STATIC
+/*#define SIGMA_STATIC*/
 #ifndef SIGMA_ENCRYPTOR_HPP
 #define SIGMA_ENCRYPTOR_HPP
 
